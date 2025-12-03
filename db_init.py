@@ -13,17 +13,18 @@ def init_db():
             "atk": 18,
             "def": 7,
             "pv_max": 90,
+            "stack": 0,
             "attaques": {
                 "base": {
-                    "nom": "Tir rapide",
+                    "nom": "Tir précis",
                     "cooldown": 0,
-                    "description": "Un tir précis à 75% de l'attaque",
-                    "fonction": "tir_rapide"
+                    "description": "Un tir précis à 75% qui ignore la défense",
+                    "fonction": "tir_precis"
                 },
                 "special": {
                     "nom": "Double tir",
                     "cooldown": 2,
-                    "description": "Deux tirs rapides à 40% de l'attaque chacun plus ",
+                    "description": "Deux tirs rapides, dégats aléatoire entre 30% et 70% de l'attaque chacun plus ",
                     "fonction": "double_tir",
                 },
                 "ultime": {
@@ -39,6 +40,7 @@ def init_db():
             "atk": 23,
             "def": 6,
             "pv_max": 105,
+            "stack": 0,
             "attaques": {
                 "base": {
                     "nom": "Hache sauvage",
@@ -65,23 +67,24 @@ def init_db():
             "atk": 14,
             "def": 12,
             "pv_max": 110,
+            "stack": 0,
             "attaques": {
                 "base": {
                     "nom": "Coup de bouclier",
                     "cooldown": 0,
-                    "description": "frappe avec le bouclier avec 50% des pv max en dégats",
+                    "description": "frappe avec le bouclier avec 15% des pv max en dégats",
                     "fonction": "coup_de_bouclier"
                 },
                 "special": {
                     "nom": "bénédiction",
-                    "cooldown": 2,
+                    "cooldown": 0,
                     "description": "Soigne l'équipe de 20% de leurs pv manquant chacun",
                     "fonction": "benediction"
                 },
                 "ultime": {
                     "nom": "Chatiment",
-                    "cooldown": 5,
-                    "description": "inflige des dégats équivalent à 100% des pv max du paladin",
+                    "cooldown": 0,
+                    "description": "soigne l'équipe de 30% et augmente leurs défense de 50% de la défense du paladin pour 3 tours",
                     "fonction": "chatiment"
                 }
             }

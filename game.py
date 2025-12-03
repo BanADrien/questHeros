@@ -68,10 +68,11 @@ class Partie:
             afficher_details_attaque(hero)
             attaques_dispo = obtenir_attaques_disponibles(hero)
             
-            choix = self.choisir_attaque(len(attaques_dispo))
+            choix = self.choisir_attaque(hero)
             type_attaque, attaque_info = attaques_dispo[choix - 1]
+
             
-            executer_attaque(hero, monstre, type_attaque, attaque_info)
+            executer_attaque(hero, monstre, self.equipe, type_attaque, attaque_info)
             
           
             gerer_cooldown_attaque(hero, type_attaque, attaque_info)
@@ -80,16 +81,27 @@ class Partie:
         for hero in self.equipe:
             hero.reduire_cooldowns()
     
-    def choisir_attaque(self, nb_attaques_dispo):
+    def choisir_attaque(self, hero):
         while True:
             try:
-                choix = int(input(f"\nChoisissez une attaque (1-{nb_attaques_dispo}): "))
-                if 1 <= choix <= nb_attaques_dispo:
-                    return choix
-                else:
-                    print("Cette attaque n'est pas disponible!")
+                choix = int(input("\nChoisissez une attaque (1-3): "))
+
+                if choix not in (1, 2, 3):
+                    print(" Cette attaque n'existe pas.")
+                    continue
+
+                type_attaque = ["base", "special", "ultime"][choix - 1]
+
+                # Vérification du cooldown
+                if hero.cooldowns.get(type_attaque, 0) > 0:
+                    print(f" L'attaque {type_attaque} est en cooldown ({hero.cooldowns[type_attaque]} tours).")
+                    continue
+
+                return choix
+
             except ValueError:
-                print("Entrée invalide!")
+                print("Entrée invalide !")
+
     
     def tour_monstre(self, monstre):
         if not monstre.est_vivant():
@@ -109,6 +121,12 @@ class Partie:
         if not cible.est_vivant():
             print(f"{cible.nom} est K.O.!")
         afficher_equipe(self.equipe)
+        for hero in self.equipe:
+            hero.gerer_buffs()
+
+
+
+
     
     def combattre_monstre(self, monstre):
 
@@ -138,7 +156,6 @@ class Partie:
                 print("Choix invalide, recommence.")
                 continue
 
-            input("\nAppuyez sur Entrée pour continuer...")
 
         return not monstre.est_vivant()
 

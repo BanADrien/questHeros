@@ -21,26 +21,20 @@ def afficher_details_attaque(hero):
 
     # --- Attaque de base ---
     base = hero.attaques["base"]
-    print(f"1. {base['nom']} - {base['description']}")
-    print("   (Attaque de base, pas de cooldown)")
+    print(f"1. {base['nom']}")
+    print(f"   Description : {base['description']}")
 
     # --- Attaque spéciale ---
     special = hero.attaques["special"]
-    if hero.cooldowns["special"] == 0:
-        print(f"\n2. {special['nom']} - {special['description']}")
-        print(f"   Cooldown : {special['cooldown']} tours")
-    else:
-        print(f"\n2. {special['nom']} (cooldown : {hero.cooldowns['special']} tours)")
-        print(f"   Description : {special['description']}")
+    
+    print(f"\n2. {special['nom']} - {special['description']}")
+    print(f"   Cooldown : {special['cooldown']} tours")
 
     # --- Attaque ultime ---
     ultimate = hero.attaques["ultime"]
-    if hero.cooldowns["ultime"] == 0:
-        print(f"\n3. {ultimate['nom']} - {ultimate['description']}")
-        print(f"   Cooldown : {ultimate['cooldown']} tours")
-    else:
-        print(f"\n3. {ultimate['nom']} (plus d'utilisations)")
-        print(f"   Description : {ultimate['description']}")
+
+    print(f"\n3. {ultimate['nom']} (cooldown : {hero.cooldowns['ultime']} tours)")
+    print(f"   Description : {ultimate['description']}")
 
 def afficher_etat_combat(monstre, equipe):
     os.system('cls' if os.name == 'nt' else 'clear')
