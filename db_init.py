@@ -13,7 +13,6 @@ def init_db():
             "atk": 18,
             "def": 7,
             "pv_max": 90,
-            "stack": 0,
             "attaques": {
                 "base": {
                     "nom": "Tir précis",
@@ -23,13 +22,13 @@ def init_db():
                 },
                 "special": {
                     "nom": "Double tir",
-                    "cooldown": 2,
+                    "cooldown": 1,
                     "description": "Deux tirs rapides, dégats aléatoire entre 30% et 70% de l'attaque chacun plus ",
                     "fonction": "double_tir",
                 },
                 "ultime": {
                     "nom": "Pluie de flèches",
-                    "cooldown": 5,
+                    "cooldown": 4,
                     "description": "Barrage de flèches 10 flèches infligeant un pourcentage aléatoire entre 20 et 100% de l'attaque chacune",
                     "fonction": "pluie_de_fleches"
                 }
@@ -67,7 +66,6 @@ def init_db():
             "atk": 14,
             "def": 12,
             "pv_max": 110,
-            "stack": 0,
             "attaques": {
                 "base": {
                     "nom": "Coup de bouclier",
@@ -77,13 +75,13 @@ def init_db():
                 },
                 "special": {
                     "nom": "bénédiction",
-                    "cooldown": 0,
+                    "cooldown": 3,
                     "description": "Soigne l'équipe de 20% de leurs pv manquant chacun",
                     "fonction": "benediction"
                 },
                 "ultime": {
                     "nom": "Chatiment",
-                    "cooldown": 0,
+                    "cooldown": 5,
                     "description": "soigne l'équipe de 30% et augmente leurs défense de 50% de la défense du paladin pour 3 tours",
                     "fonction": "chatiment"
                 }
@@ -103,7 +101,7 @@ def init_db():
                 },
                 "special": {
                     "nom": "fire ball",
-                    "cooldown": 2,
+                    "cooldown": 0,
                     "description": "70 % de l'attaque moyens et brûlure",
                     "fonction": "fire_ball"
                 },
@@ -119,11 +117,11 @@ def init_db():
     ]
 
     monstres = [
-        {"nom": "Gobelin", "atk": 10, "def": 5, "pv_max": 50},
-        {"nom": "Loup féroce", "atk": 15, "def": 6, "pv_max": 70},
-        {"nom": "Orc", "atk": 20, "def": 8, "pv_max": 120},
-        {"nom": "Troll", "atk": 25, "def": 10, "pv_max": 150},
-        {"nom": "Dragon", "atk": 35, "def": 20, "pv_max": 300},
+        {"nom": "Gobelin", "atk": 10, "def": 5, "pv_max": 50, "status": []},
+        {"nom": "Loup féroce", "atk": 15, "def": 6, "pv_max": 70, "status": []},
+        {"nom": "Orc", "atk": 20, "def": 8, "pv_max": 120, "status": []},
+        {"nom": "Troll", "atk": 25, "def": 10, "pv_max": 150, "status": []},
+        {"nom": "Dragon", "atk": 35, "def": 20, "pv_max": 300, "status": []},
     ]
 
     db.personnages.delete_many({})

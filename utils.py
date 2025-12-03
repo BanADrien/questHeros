@@ -26,16 +26,19 @@ def afficher_details_attaque(hero):
 
     # --- Attaque spéciale ---
     special = hero.attaques["special"]
-    
-    print(f"\n2. {special['nom']} - {special['description']}")
-    print(f"   Cooldown : {special['cooldown']} tours")
+    if hero.cooldowns["special"] == 0:
+        print(f"\n2. {special['nom']} (prête)")
+    else:
+        print(f"\n2. {special['nom']} (cooldown : {hero.cooldowns['special']} tours)")
+    print(f"   Description : {special['description']}")
 
     # --- Attaque ultime ---
     ultimate = hero.attaques["ultime"]
-
-    print(f"\n3. {ultimate['nom']} (cooldown : {hero.cooldowns['ultime']} tours)")
+    if hero.cooldowns["ultime"] == 0:
+        print(f"\n3. {ultimate['nom']} (prête)")
+    else:
+        print(f"\n3. {ultimate['nom']} (cooldown : {hero.cooldowns['ultime']} tours)")
     print(f"   Description : {ultimate['description']}")
-
 def afficher_etat_combat(monstre, equipe):
     os.system('cls' if os.name == 'nt' else 'clear')
     print("\n" + "="*50)
@@ -45,7 +48,6 @@ def afficher_etat_combat(monstre, equipe):
 
 
 def afficher_equipe(equipe):
-    os.system('cls' if os.name == 'nt' else 'clear')
 
     print("\n" + "="*50)
     print("VOTRE ÉQUIPE")
@@ -69,6 +71,7 @@ def afficher_equipe(equipe):
         # Emojis pour la barre
         bloc_plein_emoji = "🟩"
         bloc_vide_emoji = "⬛"
+        
         barre_vie = bloc_plein_emoji * blocs_pleins + bloc_vide_emoji * blocs_vides
 
         # Affichage

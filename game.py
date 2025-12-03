@@ -1,4 +1,5 @@
 import random
+import os
 from datetime import datetime
 from models import Combattant
 from db_init import get_db
@@ -120,11 +121,12 @@ class Partie:
         
         if not cible.est_vivant():
             print(f"{cible.nom} est K.O.!")
+        
         afficher_equipe(self.equipe)
         for hero in self.equipe:
             hero.gerer_buffs()
 
-
+        
 
 
     
@@ -144,10 +146,13 @@ class Partie:
                 self.tour_heros(monstre)
                 
                 if monstre.est_vivant():
+                    monstre.appliquer_status()
                     self.tour_monstre(monstre)
+                    
 
             elif choix == "2":
                
+                os.system('cls' if os.name == 'nt' else 'clear')
                 afficher_equipe(self.equipe)
                 
                 continue  

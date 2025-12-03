@@ -55,7 +55,18 @@ def buff_stat(self, stat, montant, tours):
     print(f"> {self.nom} gagne +{montant} {stat} pour {tours} tours (nouvelle {stat.upper()} : {getattr(self, stat)})")
 
 
+def brulure(cible, tours):
+    # degat en pourcentage de la vie max
+    montant = int(cible.pv_max * 0.05)
+    cible.status.append({
+        "stat": "brulure",
+        "montant": montant,
+        "tours_restants": tours
+    })
+    print(f"> {cible.nom} est brûlé et subira {montant} dégâts pendant {tours} tours.")
+    
 
+    
 # spells pour chaque personnages 
 
 #  archer
@@ -109,7 +120,8 @@ def fire_ball(attaquant, cible, equipe):
     degats = int(attaquant.atk * 0.70)
     reels = cible.prendre_degats(degats)
 
-    print(f"> {cible.nom} est brûlé (5 dégâts / tour pendant 3 tours).")
+    brulure(cible, 3)
+    
     # effet brûlure à gérer dans Combattant.status_effects
     return reels
 

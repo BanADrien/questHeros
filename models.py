@@ -17,6 +17,7 @@ class Combattant:
             }
 
         self.buffs = []
+        self.status = data.get("status", [])
     
     def est_vivant(self):
         return self.pv > 0
@@ -64,3 +65,26 @@ class Combattant:
         # Supprimer les buffs expirés
         for buff in buffs_a_supprimer:
             self.buffs.remove(buff)
+            
+            
+            
+            
+            
+    def appliquer_status(self):
+        status_a_supprimer = []
+        for s in self.status:
+            stat = s["stat"]
+            montant = s["montant"]
+            s["tours_restants"] -= 1
+
+            if stat == "brulure":
+                self.pv = max(0, self.pv - montant)
+                print(f"> {self.nom} subit {montant} dégâts de brûlure ! (PV : {self.pv}/{self.pv_max})")
+            # elif pour rajouter des status si besoin
+            
+            # Supprimer le status si terminé
+            if s["tours_restants"] <= 0:
+                status_a_supprimer.append(s)
+
+        for s in status_a_supprimer:
+            self.status.remove(s)
