@@ -16,13 +16,12 @@ class Combattant:
         return self.pv > 0
     
     def prendre_degats(self, degats):
-        degats_reels = max(1, degats - self.defense)
+        reduction = self.defense / (self.defense + 100)
+        degats_reels = max(1, int(degats * (1 - reduction)))
         self.pv = max(0, self.pv - degats_reels)
         return degats_reels
     
-    def calculer_degats(self, attaque_info):
-        return int(self.atk * attaque_info["multiplicateur"])
-    
+
     def reduire_cooldowns(self):
         for key in self.cooldowns:
             if self.cooldowns[key] > 0:

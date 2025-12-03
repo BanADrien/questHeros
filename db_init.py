@@ -108,7 +108,7 @@ def init_db():
                     "nom": "mal phénoménal",
                     "cooldown": 5,
                     "utilisations_max": 2,
-                    "description": "retire 30% des pv max de l'ennemi en dégats bruts plus 100% de l'attaque_de_base ",
+                    "description": "inflige des dégats fixes de 30% des pv manquant de la cible plus 100% de l'attaque du mage",
                     "fonction": "mal_phenomenal"
                 }
             }

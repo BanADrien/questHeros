@@ -15,7 +15,6 @@ def menu_principale_de_combat():
 
 
 def afficher_details_attaque(hero):
-    os.system('cls' if os.name == 'nt' else 'clear')
     
     print(f"\nAttaques de {hero.nom}:")
     print("-" * 40)
@@ -49,10 +48,6 @@ def afficher_etat_combat(monstre, equipe):
     print(f"COMBAT CONTRE {monstre.nom.upper()}")
     print("="*50)
     print(f"\n{monstre.nom}: {monstre.pv}/{monstre.pv_max} PV")
-    print("\nVotre équipe:")
-    for i, hero in enumerate(equipe, start=1):
-        statut = "KO" if not hero.est_vivant() else f"{hero.pv}/{hero.pv_max} PV"
-        print(f"  {i}. {hero.nom}: {statut}")
 
 
 def afficher_equipe(equipe):

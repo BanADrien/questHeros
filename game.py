@@ -108,6 +108,7 @@ class Partie:
         
         if not cible.est_vivant():
             print(f"{cible.nom} est K.O.!")
+        afficher_equipe(self.equipe)
     
     def combattre_monstre(self, monstre):
 
