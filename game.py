@@ -2,11 +2,12 @@ import random
 import os
 from datetime import datetime
 from models import Combattant
+from items import obtenir_loot_apres_combat
 from db_init import get_db
 from utils import (
     menu_principale_de_combat, afficher_etat_combat, afficher_details_attaque, 
     afficher_intro_combat, afficher_tour, afficher_resultat_combat,
-    afficher_equipe
+    afficher_equipe, afficher_monstre
 )
 from attaques import (
     executer_attaque, obtenir_attaques_disponibles, 
@@ -19,6 +20,7 @@ class Partie:
     def __init__(self):
         self.equipe = []
         self.monstres = []
+        self.items = []
         self.monstre_actuel_index = 0
         self.tour = 0
     
@@ -53,7 +55,10 @@ class Partie:
         monstres_data = list(db.monstres.find())
         for monstre_data in monstres_data:
             self.monstres.append(Combattant(monstre_data, est_heros=False))
-    
+    def charger_items(self):
+        items_data = list(db.items.find())
+        self.items = items_data
+        
     def tour_heros(self, monstre):
         for hero in self.equipe:
             if not hero.est_vivant():
@@ -74,7 +79,7 @@ class Partie:
 
             
             executer_attaque(hero, monstre, self.equipe, type_attaque, attaque_info)
-            
+            afficher_monstre(monstre)
           
             gerer_cooldown_attaque(hero, type_attaque, attaque_info)
         
@@ -118,6 +123,8 @@ class Partie:
         degats = monstre.atk
         degats_reels = cible.prendre_degats(degats)
         print(f"{degats_reels} dégâts infligés à {cible.nom}!")
+        attente = input("Appuyez sur Entrée pour continuer...")
+        
         
         if not cible.est_vivant():
             print(f"{cible.nom} est K.O.!")
@@ -171,6 +178,7 @@ class Partie:
         print("="*60)
         
         self.choisir_equipe()
+        self.charger_items()
         self.charger_monstres()
         
         print(f"\nVous allez affronter {len(self.monstres)} monstres!")
@@ -183,6 +191,8 @@ class Partie:
             if victoire:
                 victoires += 1
                 afficher_resultat_combat(True, monstre, victoires, len(self.monstres))
+                
+                obtenir_loot_apres_combat(self.equipe, self.items)
                 
                 if monstre != self.monstres[-1]:
                     input("\nAppuyez sur Entrée pour affronter le prochain monstre...")

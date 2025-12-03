@@ -1,3 +1,5 @@
+# models.py
+
 class Combattant:
     def __init__(self, data, est_heros=True):
         self.nom = data["nom"]
@@ -17,6 +19,7 @@ class Combattant:
             }
 
         self.buffs = []
+        self.items = []
         self.status = data.get("status", [])
     
     def est_vivant(self):
@@ -29,10 +32,10 @@ class Combattant:
         return degats_reels
     
     def prendre_degats_directs(self, degats):
-        self.pv = max(0, self.pv - degats)
-        return degats
+        """Dégâts directs sans réduction. Peut être négatif pour soigner"""
+        self.pv = max(0, min(self.pv_max, self.pv - degats))
+        return abs(degats)
     
-
     def reduire_cooldowns(self):
         for key in self.cooldowns:
             if self.cooldowns[key] > 0:
@@ -43,7 +46,6 @@ class Combattant:
         nom_fonction = self.attaques[type_attaque]["fonction"]
         return getattr(attaques, nom_fonction)
     
-    
     def gerer_buffs(self):
         buffs_a_supprimer = []
         for buff in self.buffs:
@@ -51,7 +53,7 @@ class Combattant:
             if buff["tours_restants"] <= 0:
                 stat = buff["stat"]
                 montant = buff["montant"]
-                # Retirer l’effet
+                # Retirer l'effet
                 if stat == "atk":
                     self.atk -= montant
                 elif stat == "defense":
@@ -62,14 +64,10 @@ class Combattant:
                 print(f"> {self.nom} perd son bonus de {montant} {stat}.")
             else:
                 print(f"> {self.nom} a encore {buff['tours_restants']} tours de bonus de {buff['montant']} {buff['stat']}.")
-        # Supprimer les buffs expirés
+        
         for buff in buffs_a_supprimer:
             self.buffs.remove(buff)
-            
-            
-            
-            
-            
+    
     def appliquer_status(self):
         status_a_supprimer = []
         for s in self.status:
@@ -80,11 +78,53 @@ class Combattant:
             if stat == "brulure":
                 self.pv = max(0, self.pv - montant)
                 print(f"> {self.nom} subit {montant} dégâts de brûlure ! (PV : {self.pv}/{self.pv_max})")
-            # elif pour rajouter des status si besoin
             
-            # Supprimer le status si terminé
             if s["tours_restants"] <= 0:
                 status_a_supprimer.append(s)
 
         for s in status_a_supprimer:
             self.status.remove(s)
+    
+    def equiper_item(self, item):
+        """Équipe un item sur le combattant"""
+        self.items.append(item)
+        
+        # Appliquer les bonus de stats permanents
+        for stat, val in item.stats_bonus.items():
+            if stat == "pv_max":
+                self.pv_max += val
+                self.pv += val
+            elif stat == "atk":
+                self.atk += val
+            elif stat == "defense":
+                self.defense += val
+            else:
+                setattr(self, stat, getattr(self, stat) + val)
+        
+        print(f" {self.nom} équipe {item.nom} !")
+        if item.stats_bonus:
+            bonus_str = ", ".join([f"+{v} {k}" for k, v in item.stats_bonus.items()])
+            print(f"   Bonus : {bonus_str}")
+    
+    def appliquer_effets_items(self):
+        
+        import effects
+        
+        for item in self.items:
+            if item.effet:
+                fonction_nom = item.effet["fonction"]
+                fonction = getattr(effects, fonction_nom)
+                
+                # Appeler la fonction d'effet avec les paramètres
+                params = item.effet.copy()
+                params.pop("fonction")  # Retirer le nom de fonction des params
+                fonction(self, **params)
+
+
+class Item:
+    def __init__(self, data):
+        self.nom = data["nom"]
+        self.description = data["description"]
+        self.stats_bonus = data.get("stats_bonus", {})
+        self.effet = data.get("effet", None)
+        self.rarete = data.get("rarete", "commun")

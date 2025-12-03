@@ -2,7 +2,7 @@
 
 import random
 from utils import afficher_equipe
-
+from effects import effet_soin, buff_stat, brulure
 
 
 def executer_attaque(attaquant, cible, equipe, type_attaque, attaque_info):
@@ -24,46 +24,45 @@ def executer_attaque(attaquant, cible, equipe, type_attaque, attaque_info):
 
     if not cible.est_vivant():
         print(f"{cible.nom} est mort !")
-    attente = input("Appuyez sur Entrée pour continuer...")
     return degats_total
 
 # effets 
 
 
-def effet_soin(cible, montant):
+# def effet_soin(cible, montant):
 
-    reels = cible.prendre_degats_directs(-montant)
-    print(f"> {cible.nom} récupère {reels} PV (PV actuel : {cible.pv}/{cible.pv_max})")
-    return reels
+#     reels = cible.prendre_degats_directs(-montant)
+#     print(f"> {cible.nom} récupère {reels} PV (PV actuel : {cible.pv}/{cible.pv_max})")
+#     return reels
 
-def buff_stat(self, stat, montant, tours):
-    # Applique le boost immédiatement
-    if stat == "atk":
-        self.atk += montant
-    elif stat == "defense":
-        self.defense += montant
-    else:
-        setattr(self, stat, getattr(self, stat) + montant)
+# def buff_stat(self, stat, montant, tours):
+#     # Applique le boost immédiatement
+#     if stat == "atk":
+#         self.atk += montant
+#     elif stat == "defense":
+#         self.defense += montant
+#     else:
+#         setattr(self, stat, getattr(self, stat) + montant)
     
-    # Enregistre le buff dans la liste
-    self.buffs.append({
-        "stat": stat,
-        "montant": montant,
-        "tours_restants": tours
-    })
+#     # Enregistre le buff dans la liste
+#     self.buffs.append({
+#         "stat": stat,
+#         "montant": montant,
+#         "tours_restants": tours
+#     })
     
-    print(f"> {self.nom} gagne +{montant} {stat} pour {tours} tours (nouvelle {stat.upper()} : {getattr(self, stat)})")
+#     print(f"> {self.nom} gagne +{montant} {stat} pour {tours} tours (nouvelle {stat.upper()} : {getattr(self, stat)})")
 
 
-def brulure(cible, tours):
-    # degat en pourcentage de la vie max
-    montant = int(cible.pv_max * 0.05)
-    cible.status.append({
-        "stat": "brulure",
-        "montant": montant,
-        "tours_restants": tours
-    })
-    print(f"> {cible.nom} est brûlé et subira {montant} dégâts pendant {tours} tours.")
+# def brulure(cible, tours):
+#     # degat en pourcentage de la vie max
+#     montant = int(cible.pv_max * 0.05)
+#     cible.status.append({
+#         "stat": "brulure",
+#         "montant": montant,
+#         "tours_restants": tours
+#     })
+#     print(f"> {cible.nom} est brûlé et subira {montant} dégâts pendant {tours} tours.")
     
 
     

@@ -1,5 +1,6 @@
 from db_init import get_db
 from datetime import datetime
+
 import os
 db = get_db()
 
@@ -45,8 +46,37 @@ def afficher_etat_combat(monstre, equipe):
     print(f"COMBAT CONTRE {monstre.nom.upper()}")
     print("="*50)
     print(f"\n{monstre.nom}: {monstre.pv}/{monstre.pv_max} PV")
+    
+def afficher_pv_perso(perso):
+# ptite interface sympatoche pour le kiff
+    pv_maximum = int(perso.pv_max) 
+    pv_actuel = int(perso.pv)
+    nom = perso.nom
+    attaque = perso.atk
+    defense = perso.defense
+    # Calcul de la barre de vie sur 10 blocs
+    ratio = pv_actuel / pv_maximum if pv_maximum > 0 else 0.0
+    total_blocs = 10
+    blocs_pleins = int(ratio * total_blocs)
+    blocs_pleins = max(0, min(total_blocs, blocs_pleins))
+    blocs_vides = total_blocs - blocs_pleins
 
+    # Emojis pour la barre
+    bloc_plein_emoji = "🟩"
+    bloc_vide_emoji = "⬛"
+    
+    barre_vie = bloc_plein_emoji * blocs_pleins + bloc_vide_emoji * blocs_vides
 
+    # Affichage
+    print(f"\n{nom}")
+    print(f"[{barre_vie}] {pv_actuel}/{pv_maximum} PV")
+    print(f"  ATK : {attaque} / DEF : {defense} / PV MAX : {pv_maximum}")
+    print("-"*50)
+
+def afficher_monstre(monstre):
+    afficher_pv_perso(monstre)
+    input("\nAppuyez sur Entrée pour continuer...")
+    
 def afficher_equipe(equipe):
 
     print("\n" + "="*50)
@@ -55,33 +85,10 @@ def afficher_equipe(equipe):
 
     for perso in equipe:
         
-        # ptite interface sympatoche pour le kiff
-        pv_maximum = int(perso.pv_max) 
-        pv_actuel = int(perso.pv)
-        nom = perso.nom
-        attaque = perso.atk
-        defense = perso.defense
-        # Calcul de la barre de vie sur 10 blocs
-        ratio = pv_actuel / pv_maximum if pv_maximum > 0 else 0.0
-        total_blocs = 10
-        blocs_pleins = int(ratio * total_blocs)
-        blocs_pleins = max(0, min(total_blocs, blocs_pleins))
-        blocs_vides = total_blocs - blocs_pleins
-
-        # Emojis pour la barre
-        bloc_plein_emoji = "🟩"
-        bloc_vide_emoji = "⬛"
-        
-        barre_vie = bloc_plein_emoji * blocs_pleins + bloc_vide_emoji * blocs_vides
-
-        # Affichage
-        print(f"\n{nom}")
-        print(f"[{barre_vie}] {pv_actuel}/{pv_maximum} PV")
-        print(f"  ATK : {attaque} / DEF : {defense} / PV MAX : {pv_maximum}")
-        print("-"*50)
-
+        afficher_pv_perso(perso)
     input("\nAppuyez sur Entrée pour continuer...")
 
+    
 
 def afficher_scores():
     os.system('cls' if os.name == 'nt' else 'clear')
