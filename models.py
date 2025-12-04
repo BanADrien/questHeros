@@ -40,7 +40,7 @@ class Combattant:
         for key in self.cooldowns:
             if self.cooldowns[key] > 0:
                 self.cooldowns[key] -= 1
-                
+            
     def get_fonction_attaque(self, type_attaque):
         import attaques
         nom_fonction = self.attaques[type_attaque]["fonction"]

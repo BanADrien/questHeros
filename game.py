@@ -99,6 +99,8 @@ class Partie:
             afficher_monstre(monstre)
           
             gerer_cooldown_attaque(hero, type_attaque, attaque_info)
+            # renitialiser le cooldown de l'attaque si il en possede 
+            
         
         
         for hero in self.equipe:

@@ -186,7 +186,6 @@ def lame_toxique (attaquant, cible, equipe):
     degats = int(attaquant.atk * 0.80)
     reels = cible.prendre_degats(degats)
     poison(cible, 3) 
-    gerer_cooldown_attaque(attaquant, "special", {"cooldown": 2}) 
     
     return reels
 
@@ -211,8 +210,7 @@ def obtenir_attaques_disponibles(hero):
 def gerer_cooldown_attaque(hero, type_attaque, attaque_info):
     cooldown = attaque_info.get("cooldown", 0)
 
-    if type_attaque == "special":
-        hero.cooldowns["special"] = cooldown
+    if cooldown > 0:
+        hero.cooldowns[type_attaque] = cooldown + 1
+        print(f"> {hero.nom} met {type_attaque} en cooldown pour {cooldown} tours.")
 
-    elif type_attaque == "ultime":
-        hero.cooldowns["ultime"] = cooldown
