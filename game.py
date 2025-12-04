@@ -31,7 +31,7 @@ class Partie:
         print("SÉLECTION DE L'ÉQUIPE")
         print("="*50)
         
-        for i in range(1):
+        for i in range(3):
             print(f"\nChoix du héros {i+1}/3:")
             print("-" * 40)
             for id, perso in enumerate(personnages_dispo, start=1):

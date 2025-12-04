@@ -212,5 +212,4 @@ def gerer_cooldown_attaque(hero, type_attaque, attaque_info):
 
     if cooldown > 0:
         hero.cooldowns[type_attaque] = cooldown + 1
-        print(f"> {hero.nom} met {type_attaque} en cooldown pour {cooldown} tours.")
 

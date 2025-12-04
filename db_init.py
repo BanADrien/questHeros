@@ -101,7 +101,7 @@ def init_db():
                 },
                 "special": {
                     "nom": "fire ball",
-                    "cooldown": 0,
+                    "cooldown": 2,
                     "description": "70 % de l'attaque moyens et brûlure",
                     "fonction": "fire_ball"
                 },
