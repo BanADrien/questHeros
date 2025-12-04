@@ -64,7 +64,10 @@ def brulure(cible, tours, montant=None):
     print(f" {cible.nom} est brûlé et subira {montant} dégâts pendant {tours} tours.")
 
 
-def poison(cible, tours, montant):
+def poison(cible, tours):
+    montant = (cible.pv_max - cible.pv) / 100 *10
+    
+    montant = int(-(-montant // 1))
     cible.status.append({
         "stat": "poison",
         "montant": montant,
@@ -74,6 +77,8 @@ def poison(cible, tours, montant):
 
 
 def saignement(cible, tours, montant):
+    montant = montant / 100 *10
+    montant = int(-(-montant // 1))
     cible.status.append({
         "stat": "saignement",
         "montant": montant,

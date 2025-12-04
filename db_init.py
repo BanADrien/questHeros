@@ -129,7 +129,7 @@ def init_db():
                 },
                 "special": {
                     "nom": "explosion sanguine",
-                    "cooldown": 0,
+                    "cooldown": 3,
                     "description": "inflige des degats equivalent à 100% des pv stockés en stack de sang",
                     "fonction": "explosion_sanguine"
                 },
@@ -139,6 +139,34 @@ def init_db():
                     "utilisations_max": 2,
                     "description": "inflige des dégats fixes de 200% des degats et recupère 100% des dégats infligés en pv",
                     "fonction": "siphonage_total"
+                }
+            }
+        },
+         {
+            "nom": "Assasin",
+            "atk": 30,
+            "def": 5,
+            "pv_max": 70,
+            "stack": 0,
+            "attaques": {
+                "base": {
+                    "nom": "incision",
+                    "cooldown": 0,
+                    "description": "inflige 50% de l'attaque et inflige saignement pour 3 tours",
+                    "fonction": "incision"
+                },
+                "special": {
+                    "nom": "lame toxique",
+                    "cooldown": 1,
+                    "description": "inflige 40% de l'attaque et empoisonne pour 3 tours",
+                    "fonction": "lame_toxique"
+                },
+                "ultime": {
+                    "nom": "assassinat",
+                    "cooldown": 5,
+                    "utilisations_max": 2,
+                    "description": "inflige des dégats fixes de 200% si la cible à moin de 20% de ses pv elle est éxecutée",
+                    "fonction": "assassinat"
                 }
             }
         },

@@ -78,6 +78,12 @@ class Combattant:
             if stat == "brulure":
                 self.pv = max(0, self.pv - montant)
                 print(f"> {self.nom} subit {montant} dégâts de brûlure ! (PV : {self.pv}/{self.pv_max})")
+            if stat == "poison":
+                self.pv = max(0, self.pv - montant)
+                print(f"> {self.nom} subit {montant} dégâts de poison ! (PV : {self.pv}/{self.pv_max})")
+            if stat == "saignement":
+                self.pv = max(0, self.pv - montant)
+                print(f"> {self.nom} subit {montant} dégâts de saignement ! (PV : {self.pv}/{self.pv_max})")
             
             if s["tours_restants"] <= 0:
                 status_a_supprimer.append(s)

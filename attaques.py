@@ -2,7 +2,7 @@
 
 import random
 from utils import afficher_equipe
-from effects import effet_soin, buff_stat, brulure, effet_vol_de_vie
+from effects import effet_soin, buff_stat, brulure, effet_vol_de_vie, saignement, poison
 
 
 def executer_attaque(attaquant, cible, equipe, type_attaque, attaque_info):
@@ -174,7 +174,30 @@ def siphonage_total(attaquant, cible, equipe):
     attaquant.stack += soin
     return reels
 
-        
+# Assassin
+
+def incision (attaquant, cible, equipe):
+    degats = int(attaquant.atk * 0.50)
+    reels = cible.prendre_degats(degats)
+    saignement(cible, 3, reels)  
+    return reels
+
+def lame_toxique (attaquant, cible, equipe):
+    degats = int(attaquant.atk * 0.80)
+    reels = cible.prendre_degats(degats)
+    poison(cible, 3) 
+    gerer_cooldown_attaque(attaquant, "special", {"cooldown": 2}) 
+    
+    return reels
+
+def assassinat (attaquant, cible, equipe):
+    degats = int(attaquant.atk * 2.00)
+    reels = cible.prendre_degats(degats)
+    if cible.pv / cible.pv_max < 0.20:
+        reels += cible.prendre_degats_directs(cible.pv)  
+        print(f">{cible.nom} est instantanément tué !")
+    return reels
+
 
 def obtenir_attaques_disponibles(hero):
     return [
