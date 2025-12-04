@@ -21,6 +21,7 @@ class Partie:
         self.equipe = []
         self.monstres = []
         self.items = []
+        self.raretes = []
         self.monstre_actuel_index = 0
         self.tour = 0
     
@@ -56,8 +57,24 @@ class Partie:
         for monstre_data in monstres_data:
             self.monstres.append(Combattant(monstre_data, est_heros=False))
     def charger_items(self):
-        items_data = list(db.items.find())
-        self.items = items_data
+
+        # Charger les taux de rareté
+        self.raretes = db.raretes.find_one({}, {"_id": 0}) or {}
+
+        # Charger tous les items
+        items = list(db.items.find({}, {"_id": 0}))
+
+        # Regrouper par rareté
+        items_par_rarete = {}
+        for item in items:
+            r = item["rarete"]
+            if r not in items_par_rarete:
+                items_par_rarete[r] = []
+            items_par_rarete[r].append(item)
+
+        self.items_par_rarete = items_par_rarete
+
+        
         
     def tour_heros(self, monstre):
         for hero in self.equipe:
@@ -192,7 +209,8 @@ class Partie:
                 victoires += 1
                 afficher_resultat_combat(True, monstre, victoires, len(self.monstres))
                 
-                obtenir_loot_apres_combat(self.equipe, self.items)
+                obtenir_loot_apres_combat(self.equipe, self.raretes, self.items_par_rarete)
+
                 
                 if monstre != self.monstres[-1]:
                     input("\nAppuyez sur Entrée pour affronter le prochain monstre...")

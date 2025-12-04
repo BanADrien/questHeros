@@ -1,28 +1,43 @@
 import random
 from models import Item
 
-def generer_loot(items=None):
+
+def choisir_rarete(raretes):
     rand = random.randint(1, 100)
     cumul = 0
     
-    for item_data in items:
-        cumul += item_data["chance"]
+    for rarete, chance in raretes.items():
+        cumul += chance
         if rand <= cumul:
-            return Item(item_data)
-    return None
+            return rarete
+    
+    return "commun"  # Fallback au cas où
 
 
-def obtenir_loot_apres_combat(equipe, items):
+def generer_loot(raretes, items_par_rarete):
+    rarete = choisir_rarete(raretes)
+    items_disponibles = items_par_rarete.get(rarete, [])
+    
+    if not items_disponibles:
+        return None
+    
+    item_data = random.choice(items_disponibles)
+    return Item(item_data)
 
-   
-    item = generer_loot(items)
+
+def obtenir_loot_apres_combat(equipe, raretes, items_par_rarete):
+    item = generer_loot(raretes, items_par_rarete)
+    
     if item:
-        print(f"\n Vous avez trouvé : {item.nom} ({item.rarete})")
+        print(f"\nVous avez trouvé : {item.nom} ({item.rarete})")
         print(f"   {item.description}")
-        print ("\nChoisissez un héros pour équiper cet item:")
+        print("\nChoisissez un héros pour équiper cet item:")
+        
         for idx, hero in enumerate(equipe, 1):
-            print(f"   {idx}. {hero.nom}") 
+            print(f"   {idx}. {hero.nom}")
+        
         hero_choisi = input("Choisissez un héros pour équiper cet item : ")
+        
         while True:
             try:
                 choix = int(hero_choisi)
@@ -32,9 +47,9 @@ def obtenir_loot_apres_combat(equipe, items):
             except ValueError:
                 pass
             hero_choisi = input("Choix invalide. Choisissez un héros pour équiper cet item : ")
+        
         return item
     else:
-        print("\n Aucun item trouvé après le combat.")
+        print("\nAucun item trouvé après le combat.")
+    
     return None
-
-
