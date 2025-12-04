@@ -2,7 +2,7 @@
 
 import random
 from utils import afficher_equipe
-from effects import effet_soin, buff_stat, brulure
+from effects import effet_soin, buff_stat, brulure, effet_vol_de_vie
 
 
 def executer_attaque(attaquant, cible, equipe, type_attaque, attaque_info):
@@ -26,44 +26,6 @@ def executer_attaque(attaquant, cible, equipe, type_attaque, attaque_info):
         print(f"{cible.nom} est mort !")
     return degats_total
 
-# effets 
-
-
-# def effet_soin(cible, montant):
-
-#     reels = cible.prendre_degats_directs(-montant)
-#     print(f"> {cible.nom} récupère {reels} PV (PV actuel : {cible.pv}/{cible.pv_max})")
-#     return reels
-
-# def buff_stat(self, stat, montant, tours):
-#     # Applique le boost immédiatement
-#     if stat == "atk":
-#         self.atk += montant
-#     elif stat == "defense":
-#         self.defense += montant
-#     else:
-#         setattr(self, stat, getattr(self, stat) + montant)
-    
-#     # Enregistre le buff dans la liste
-#     self.buffs.append({
-#         "stat": stat,
-#         "montant": montant,
-#         "tours_restants": tours
-#     })
-    
-#     print(f"> {self.nom} gagne +{montant} {stat} pour {tours} tours (nouvelle {stat.upper()} : {getattr(self, stat)})")
-
-
-# def brulure(cible, tours):
-#     # degat en pourcentage de la vie max
-#     montant = int(cible.pv_max * 0.05)
-#     cible.status.append({
-#         "stat": "brulure",
-#         "montant": montant,
-#         "tours_restants": tours
-#     })
-#     print(f"> {cible.nom} est brûlé et subira {montant} dégâts pendant {tours} tours.")
-    
 
     
 # spells pour chaque personnages 
@@ -189,6 +151,29 @@ def chatiment(attaquant, cible, equipe):
     return 0
         
         
+# hemomencien
+
+def extraction_de_sang(attaquant, cible, equipe):
+    degats = int(attaquant.atk * 0.60)
+    reels = cible.prendre_degats(degats)
+    soin = effet_vol_de_vie(reels, 30, attaquant)  
+    attaquant.stack += soin
+    print(f" points de stack total: {attaquant.stack}")
+    return reels
+
+def explosion_sanguine(attaquant, cible, equipe):
+    degats = int(attaquant.stack)
+    reels = cible.prendre_degats(degats)
+    attaquant.stack = 0
+    return reels
+
+def siphonage_total(attaquant, cible, equipe):
+    degats = int(attaquant.atk * 2.00)
+    reels = cible.prendre_degats(degats)
+    soin = effet_vol_de_vie(reels, 100, attaquant)  
+    attaquant.stack += soin
+    return reels
+
         
 
 def obtenir_attaques_disponibles(hero):

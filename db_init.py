@@ -113,7 +113,35 @@ def init_db():
                     "fonction": "mal_phenomenal"
                 }
             }
-        }
+        },
+        {
+            "nom": "hémomancien",
+            "atk": 15,
+            "def": 0,
+            "pv_max": 100,
+            "stack": 0,
+            "attaques": {
+                "base": {
+                    "nom": "extraction de sang",
+                    "cooldown": 0,
+                    "description": "inflige 25% de l'attaque et soigne de 50% des dégats infligés et stock les pv volés en stack de sang",
+                    "fonction": "extraction_de_sang"
+                },
+                "special": {
+                    "nom": "explosion sanguine",
+                    "cooldown": 0,
+                    "description": "inflige des degats equivalent à 100% des pv stockés en stack de sang",
+                    "fonction": "explosion_sanguine"
+                },
+                "ultime": {
+                    "nom": "siphonage total",
+                    "cooldown": 5,
+                    "utilisations_max": 2,
+                    "description": "inflige des dégats fixes de 200% des degats et recupère 100% des dégats infligés en pv",
+                    "fonction": "siphonage_total"
+                }
+            }
+        },
     ]
 
     monstres = [

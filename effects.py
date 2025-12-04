@@ -14,14 +14,18 @@ def effet_soin(cible, montant):
 
 
 def effet_regen(cible, montant):
-    """Régénération passive (utilisé par les items)"""
     soins_reels = min(montant, cible.pv_max - cible.pv)
     if soins_reels > 0:
         cible.pv += soins_reels
-        print(f"💚 {cible.nom} régénère {soins_reels} PV ! (PV : {cible.pv}/{cible.pv_max})")
+        print(f"{cible.nom} régénère {soins_reels} PV ! (PV : {cible.pv}/{cible.pv_max})")
     return soins_reels
 
-
+def effet_vol_de_vie(degat, montant, attaquant):
+    # montant est le pourcentage de regen en fonction des degats infligés
+    soin = int(degat * (montant / 100))
+    attaquant.pv = min(attaquant.pv_max, attaquant.pv + soin)
+    print(f"> {attaquant.nom} vole {soin} PV ! (PV : {attaquant.pv}/{attaquant.pv_max})")
+    return soin
 
 # EFFETS DE BUFF
 
@@ -82,12 +86,7 @@ def saignement(cible, tours, montant):
 # EFFETS D'ITEMS SPÉCIAUX
 
 
-def effet_vol_de_vie(cible, montant):
-    """Soigne la cible d'un pourcentage des dégâts infligés"""
-    soins_reels = min(montant, cible.pv_max - cible.pv)
-    cible.pv += soins_reels
-    print(f"> {cible.nom} récupère {soins_reels} PV grâce au vol de vie ! (PV : {cible.pv}/{cible.pv_max})")
-    return soins_reels
+
 
 
     
