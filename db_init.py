@@ -81,7 +81,7 @@ def init_db():
                 },
                 "ultime": {
                     "nom": "Chatiment",
-                    "cooldown": 0,
+                    "cooldown": 5,
                     "description": "soigne l'équipe de 30% et augmente leurs défense de 50% de la défense du paladin pour 3 tours",
                     "fonction": "chatiment"
                 }

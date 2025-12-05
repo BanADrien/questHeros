@@ -1,18 +1,12 @@
 from db_init import init_db, get_db
 from game import Partie
-from utils import afficher_scores
+from utils import afficher_scores, menu_demarage
 
 db = get_db()
 
 def menu_principal():
     while True:
-        print("\n" + "="*50)
-        print("MENU PRINCIPAL")
-        print("="*50)
-        print("1. Nouvelle partie")
-        print("2. Initialiser la base de données")
-        print("3. Voir les scores")
-        print("4. Quitter")
+        menu_demarage()
         
         choix = input("\nVotre choix: ")
         

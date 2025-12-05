@@ -11,6 +11,14 @@ def menu_principale_de_combat():
     print("1. Attaquer")
     print("2. Regarder l'équipe")
 
+def menu_demarage():
+    print("\n" + "="*50)
+    print("MENU PRINCIPAL")
+    print("="*50)
+    print("1. Nouvelle partie")
+    print("2. Initialiser la base de données")
+    print("3. Voir les scores")
+    print("4. Quitter")
 
 
 
