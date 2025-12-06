@@ -10,8 +10,8 @@ def init_db():
     personnages = [
         {
             "nom": "Archer",
-            "description": "Tireur d'élite spécialisé dans les attaques à distance",
-            "type de personnage": "attaquant",
+            "description": "Tireur d'élite spécialisé dans les attaques à distance.",
+            "type_perso": "attaquant",
             "atk": 18,
             "def": 7,
             "pv_max": 90,
@@ -39,8 +39,8 @@ def init_db():
         },
         {
             "nom": "Berserker",
-            "description": "Guerrier offensif qui utilise de la furie pour augmenter ses dégats",
-            "type de personnage": "attaquant",
+            "description": "Guerrier offensif qui utilise de la furie pour augmenter ses dégâts.",
+            "type_perso": "attaquant",
             "atk": 23,
             "def": 6,
             "pv_max": 105,
@@ -68,8 +68,8 @@ def init_db():
         },
         {
             "nom": "Paladin",
-            "description": "Guerrier sacré défensif avec des capacités de soin",
-            "type de personnage": "Tank/support",
+            "description": "Guerrier sacré défensif avec des capacités de soin.",
+            "type_perso": "Tank/support",
             "atk": 14,
             "def": 12,
             "pv_max": 110,
@@ -96,8 +96,8 @@ def init_db():
         },
         {
             "nom": "Mage",
-            "description": "Utilisateur de magie offensive gagnant 1 atk a chaque sort lancé",
-            "type de personnage": "attaquant",
+            "description": "Utilisateur de magie offensive gagnant 1 atk a chaque sort lancé.",
+            "type_perso": "attaquant",
             "atk": 20,
             "def": 5,
             "pv_max": 85,
@@ -124,9 +124,9 @@ def init_db():
             }
         },
         {
-            "nom": "hémomancien",
-            "description": "Maître du sang utilisant des attaques qui volent la vie et stockent du sang",
-            "type de personnage": "tank/attaquant",
+            "nom": "Hémomancien",
+            "description": "Maître du sang utilisant des attaques qui volent la vie et stockent du sang.",
+            "type_perso": "tank/attaquant",
             "atk": 15,
             "def": 0,
             "pv_max": 100,
@@ -154,8 +154,8 @@ def init_db():
         },
          {
             "nom": "Assasin",
-            "description": "Maître des attaques de status et degats lourds",
-            "type de personnage": "attaquant",
+            "description": "Maître des attaques de status et dégâts lourds.",
+            "type_perso": "attaquant",
             "atk": 30,
             "def": 5,
             "pv_max": 70,
@@ -183,8 +183,8 @@ def init_db():
         },
          {
             "nom": "Chaman",
-            "description": "Invocateur de totems avec des capacités de soutien et de dégâts",
-            "type de personnage": "support",
+            "description": "Invocateur de totems avec des capacités de soutien et de dégâts.",
+            "type_perso": "support",
             "atk": 15,
             "def": 10,
             "pv_max": 90,
@@ -212,6 +212,8 @@ def init_db():
         },
         {
             "nom": "Villagois",
+            "description": "Un simple villageois voulant protéger son village mais on lui remarque un certain potentiel.",
+            "type_perso": "support",
             "atk": 10,
             "def": 3,
             "pv_max": 65,
@@ -241,6 +243,8 @@ def init_db():
     perso_annexe = [
         {
             "nom": "Héro",
+            "description": "Le héros légendaire de la prophétie.",
+            "type_perso": "attaquant/support",
             "atk": 35,
             "def": 20,
             "pv_max": 150,
@@ -255,7 +259,7 @@ def init_db():
                 "special": {
                     "nom": "motivation du héro",
                     "cooldown": 4,
-                    "description": "reduit les cooldowns de 1 pour tous les membres de l'équipe et boost l'attque et la défense des membres de 20% des stats corespondantes du héro pour 2 tours",
+                    "description": "reduit les cooldowns de 1 pour tous les membres de l'équipe et boost l'attaque et la défense des membres de 20% des stats corespondantes du héro pour 2 tours",
                     "fonction": "motivation_du_hero"
                 },
                 "ultime": {
@@ -268,6 +272,8 @@ def init_db():
         },
         {
             "nom": "Légende",
+            "description": "La forme ultime du héros, incarnation de la puissance pure.",
+            "type_perso": "attaquant/support",
             "atk": 60,
             "def": 40,
             "pv_max": 250,
@@ -280,10 +286,10 @@ def init_db():
                     "fonction": "frappe_legendaire"
                 },
                 "special": {
-                    "nom": "résurection",
+                    "nom": "motivation légendaire",
                     "cooldown": 4,
-                    "description": "réssucite un membre de l'équipe",
-                    "fonction": "resurrection"
+                    "description": "réssucite un membre de l'équipe ainsi que boost l'attaque et la défense des membres de 20% des stats corespondantes de la légende pour 3 tours",
+                    "fonction": "motivation_legendaire"
                 },
                 "ultime": {
                     "nom": "Aucun rival",

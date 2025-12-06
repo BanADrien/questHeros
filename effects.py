@@ -29,6 +29,15 @@ def effet_vol_de_vie(degat, montant, attaquant):
     print(f"> {attaquant.nom} vole {soin} PV ! (PV : {attaquant.pv}/{attaquant.pv_max})")
     return soin
 
+def resurrection(cible):
+    if cible.est_vivant():
+        print(f"> {cible.nom} est déjà vivant et ne peut pas être ressuscité.")
+        return False
+    
+    cible.pv = cible.pv_max // 2  # Ressusciter avec la moitié des PV max
+    print(f"> {cible.nom} a été ressuscité avec {cible.pv} PV !")
+    return True
+
 # EFFETS DE BUFF
 
 def buff_stat(cible, stat, montant, tours):

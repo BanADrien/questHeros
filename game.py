@@ -34,8 +34,10 @@ class Partie:
         for i in range(3):
             print(f"\nChoix du héros {i+1}/3:")
             print("-" * 40)
+            # METTRE EN GRAS UN TEXT EN TERMINAL : \033[1mVOTRE TEXTE\033[0m pour 
             for id, perso in enumerate(personnages_dispo, start=1):
-                print(f"{id}. {perso['nom']} - ATK:{perso['atk']} DEF:{perso['def']} PV:{perso['pv_max']}")
+                print(f"{id}. \033[1m{perso['nom']}\033[0m - ATK:{perso['atk']} DEF:{perso['def']} PV:{perso['pv_max']}")
+                print(f"{perso['type_perso']}, Description: {perso['description']}")
             
             while True:
                 try:
