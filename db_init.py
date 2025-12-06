@@ -217,7 +217,6 @@ def init_db():
             "atk": 10,
             "def": 3,
             "pv_max": 65,
-            "stack": 0,
             "attaques": {
                 "base": {
                     "nom": "coup de fourche",
@@ -233,12 +232,41 @@ def init_db():
                 },
                 "ultime": {
                     "nom": "???",
-                    "cooldown": 0,
+                    "cooldown": 10,
                     "description": "???",
                     "fonction": "transformation_hero"
                 }
             }
         },
+        {
+            "nom": "Druidesse",
+            "description": "Entité capable de se méthamorphoser en différentes créatures pour s'adapter aux besoins du combat, après 5 méthamorphoses elle se transforme définitivement en une bète mythique.",
+            "type_perso": "polyvalent",
+            "atk": 0,
+            "def": 0,
+            "pv_max": 100,
+            "attaques": {
+                "base": {
+                    "nom": "métamorphose",
+                    "cooldown": 0,
+                    "description": "permet de choisir une forme en laquelle se transformer.",
+                    "fonction": "methamorphose"
+                },
+                "special": {
+                    "nom": "métamorphose",
+                    "cooldown": 0,
+                    "description": "permet de choisir une forme en laquelle se transformer.",
+                    "fonction": "methamorphose"
+                },
+                "ultime": {
+                    "nom": "métamorphose",
+                    "cooldown": 0,
+                    "description": "permet de choisir une forme en laquelle se transformer.",
+                    "fonction": "methamorphose"
+                },
+            }
+        },
+        
     ]
     perso_annexe = [
         {
@@ -288,7 +316,7 @@ def init_db():
                 "special": {
                     "nom": "motivation légendaire",
                     "cooldown": 4,
-                    "description": "réssucite un membre de l'équipe ainsi que boost l'attaque et la défense des membres de 20% des stats corespondantes de la légende pour 3 tours",
+                    "description": "réssucite un membre de l'équipe, réduit les cooldown des autres membre de 1 ainsi que booster leur attaque et leur défense de 20% des stats corespondantes de la légende pour 2 tours",
                     "fonction": "motivation_legendaire"
                 },
                 "ultime": {
@@ -296,6 +324,122 @@ def init_db():
                     "cooldown": 5,
                     "description": "élimine instantanément le monstre",
                     "fonction": "aucun_rival"
+                }
+            }
+        },
+        {
+            "nom": "Arraignée géante",
+            "description": "bête capable d'empoisonner ou de paralyser ses ennemis.",
+            "type_perso": "attaquant",
+            "atk": 20,
+            "def": 5,
+            "pv_max": 100,
+            "stack": 0,
+            "attaques": {
+                "base": {
+                    "nom": "Dard venimeux",
+                    "cooldown": 0,
+                    "description": "inflige 80% de l'attaque et empoisonne la cible pour 3 tours",
+                    "fonction": "dard_venimeux"
+                },
+                "special": {
+                    "nom": "Paralysie",
+                    "cooldown": 2,
+                    "description": "paralyse l'ennemi l'empêchant d'attaquer pendant 1 tour",
+                    "fonction": "paralysie"
+                },
+                "ultime": {
+                    "nom": "méthamorphose",
+                    "cooldown": 3,
+                    "description": "se transforme en une autre bête",
+                    "fonction": "methamorphose"
+                }
+            }
+        },
+        {
+            "nom": "Arraignée géante",
+            "description": "bête capable d'empoisonner ou de paralyser ses ennemis.",
+            "type_perso": "attaquant",
+            "atk": 20,
+            "def": 5,
+            "pv_max": 100,
+            "stack": 0,
+            "attaques": {
+                "base": {
+                    "nom": "Dard venimeux",
+                    "cooldown": 0,
+                    "description": "inflige 80% de l'attaque et empoisonne la cible pour 3 tours",
+                    "fonction": "dard_venimeux"
+                },
+                "special": {
+                    "nom": "Paralysie",
+                    "cooldown": 3,
+                    "description": "paralyse l'ennemi l'empêchant d'attaquer pendant 1 tour",
+                    "fonction": "paralysie"
+                },
+                "ultime": {
+                    "nom": "méthamorphose",
+                    "cooldown": 4,
+                    "description": "se transforme en une autre bête",
+                    "fonction": "methamorphose"
+                }
+            }
+        },
+        {
+            "nom": "Tortue blindée",
+            "description": "bête capable de se soigner et de protéger ses alliés.",
+            "type_perso": "tank/support",
+            "atk": 10,
+            "def": 60,
+            "pv_max": 100,
+            "stack": 0,
+            "attaques": {
+                "base": {
+                    "nom": "auto-guerison",
+                    "cooldown": 0,
+                    "description": "se regenere 30 pv",
+                    "fonction": "auto_guerison"
+                },
+                "special": {
+                    "nom": "carapace partagée",
+                    "cooldown": 3,
+                    "description": "boost la défense de toute l'équipe de 30 pendant 2 tours",
+                    "fonction": "carapace_partagee"
+                },
+                "ultime": {
+                    "nom": "méthamorphose",
+                    "cooldown": 4,
+                    "description": "se transforme en une autre bête",
+                    "fonction": "methamorphose"
+                }
+            }
+        },
+        {
+            "nom": "Singe savant",
+            "description": "bête capable d'augmanter définitivement les stats de ses alliés et de crée un objet aléatoire",
+            "type_perso": "support",
+            "atk": 20,
+            "def": 5,
+            "pv_max": 100,
+            "stack": 0,
+            "attaques": {
+                "base": {
+                    "nom": "Cours particuliers",
+                    "cooldown": 0,
+                    "description": "donne 5 point d'une stat aléatoire à un allié",
+                    "fonction": "cours_particuliers"
+                },
+                "special": {
+                    "nom": "invention",
+                    "cooldown": 3,
+                    "description": "crée un objet aléatoire",
+                    "fonction": "invention"
+                },
+                "ultime": {
+                    "nom": "méthamorphose",
+                    "cooldown": 4,
+                    "description": "se transforme en une autre bête",
+                    "fonction": "methamorphose"
                 }
             }
         },

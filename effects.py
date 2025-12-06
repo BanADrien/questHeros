@@ -1,5 +1,6 @@
 
-
+from db_init import get_db
+from models import Combattant
 # effects.py
 
 
@@ -99,7 +100,19 @@ def saignement(cible, tours, montant):
 
 
 
-# EFFETS Specifiques perso
+# EFFETS Speciaux
+
+def transformation(attaquant, nouvelle_forme, equipe):
+    db = get_db()
+    
+    forme_data = db.perso_annexe.find_one({"nom": nouvelle_forme})
+    forme_data.pop("_id", None)
+    
+    forme_obj = Combattant(forme_data, est_heros=True)
+    index = equipe.index(attaquant)
+    print(f"> {attaquant.nom} se transforme en {forme_obj.nom} !")
+    equipe[index] = forme_obj
+    return 0
 
 
 

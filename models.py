@@ -82,7 +82,6 @@ class Combattant:
             fusion[stat]["montants"].append(montant)
             fusion[stat]["objs"].append(s)
 
-        # --- APPLICATION DES STAT FUSIONNÉS ---
         status_a_supprimer = []
 
         for stat, data in fusion.items():
