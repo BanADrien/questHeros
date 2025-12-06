@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 from models import Combattant
 from items import obtenir_loot_apres_combat
+from hero_turn import tour_hero
 from db_init import get_db
 from utils import (
     menu_principale_de_combat, afficher_etat_combat, afficher_details_attaque, 
@@ -76,6 +77,7 @@ class Partie:
 
         self.items_par_rarete = items_par_rarete
 
+
         
         
     def tour_heros(self, monstre):
@@ -88,24 +90,8 @@ class Partie:
                 break
             
             afficher_etat_combat(monstre, self.equipe)
-            print(f"\nC'est au tour de {hero.nom}!")
-            
-            hero.appliquer_status()
-            if hero.peut_attaquer == False:
-                continue
-            else:
-                afficher_details_attaque(hero)
-                attaques_dispo = obtenir_attaques_disponibles(hero)
-                
-                choix = self.choisir_attaque(hero)
-                type_attaque, attaque_info = attaques_dispo[choix - 1]
-
-                
-                executer_attaque(hero, monstre, self.equipe, type_attaque, attaque_info)
-                afficher_monstre(monstre)
-          
-            gerer_cooldown_attaque(hero, type_attaque, attaque_info)
-            # renitialiser le cooldown de l'attaque si il en possede 
+           
+            tour_hero(self, hero, monstre)
             
         
         

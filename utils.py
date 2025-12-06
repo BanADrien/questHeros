@@ -138,3 +138,4 @@ def afficher_resultat_combat(victoire, monstre, victoires, total_monstres):
     else:
         print(f"\nDÉFAITE! Votre équipe a été vaincue par le {monstre.nom}...")
         print(f"Score final: {victoires}/{total_monstres}")
+        

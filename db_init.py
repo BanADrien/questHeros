@@ -351,8 +351,8 @@ def init_db():
                 },
                 "special": {
                     "nom": "Paralysie",
-                    "cooldown": 0,
-                    "description": "paralyse l'ennemi l'empêchant d'attaquer pendant 1 tour",
+                    "cooldown": 2,
+                    "description": "inflige 20% de l'attaque et paralyse l'ennemi l'empêchant d'attaquer pendant 1 tour",
                     "fonction": "paralysie"
                 },
                 "ultime": {

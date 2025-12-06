@@ -43,7 +43,7 @@ def dard_venimeux(attaquant, cible, equipe):
     return reels
 
 def paralysie(attaquant, cible, equipe):
-    degats = int(attaquant.atk * 0.10)
+    degats = int(attaquant.atk * 0.20)
     reels = cible.prendre_degats(degats)
     stun(cible, 2)
     return reels

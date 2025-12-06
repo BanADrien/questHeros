@@ -1,5 +1,4 @@
 from effects import buff_stat, effet_soin
-from utils import afficher_equipe
 def coup_de_bouclier(attaquant, cible, equipe):
     degats = int(attaquant.pv_max * 0.15)
     reels = cible.prendre_degats(degats)
@@ -12,7 +11,6 @@ def priere(attaquant, cible, equipe):
         membre.pv = min(membre.pv_max, membre.pv + soin)
         soin_total += soin
         print(f"> {membre.nom} récupère {soin} PV ")
-    afficher_equipe(equipe)
     return 0
 
 def benediction(attaquant, cible, equipe):

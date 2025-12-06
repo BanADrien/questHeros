@@ -1,7 +1,6 @@
 # === attaques.py ===
 
 import random
-from utils import afficher_equipe
 from effects import effet_soin, buff_stat, brulure, effet_vol_de_vie, saignement, poison, effet_regen, resurrection
 from db_init import get_db
 from models import Combattant
