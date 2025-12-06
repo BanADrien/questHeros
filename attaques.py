@@ -197,6 +197,51 @@ def assassinat (attaquant, cible, equipe):
         print(f">{cible.nom} est instantanément tué !")
     return reels
 
+# chaman 
+#                     "description": "¨pose un totem aléatoire qui aura un effet parmis : regen, brulure, poison, ou dégats",
+
+def totem_regen(attaquant, cible, equipe):
+    soin_total = 0
+    for membre in equipe:
+        montant = int(membre.pv_max * 0.15)
+        effet_soin(membre, montant)
+        soin_total += montant
+    return 0
+
+def totem_brulure(attaquant, cible):
+    brulure(cible, 3)
+    return 0
+
+def totem_poison(attaquant, cible):
+    poison(cible, 3)
+    return 0
+
+def totem_degats(attaquant, cible):
+    degats = int(attaquant.atk * 1.00)
+    reels = cible.prendre_degats(degats)
+    return reels
+
+def totem(attaquant, cible, equipe):
+    totems = [totem_regen, totem_brulure, totem_poison, totem_degats]
+    totem_choisi = random.choice(totems)
+    print(f"> Le totem invoqué est : {totem_choisi.__name__}")
+    return totem_choisi(attaquant, cible, equipe)
+
+def totem_de_guerre(attaquant, cible, equipe):
+    montant_boost_atk = int(attaquant.atk * 0.30)
+    for membre in equipe:
+        buff_stat(membre, "atk", montant_boost_atk, 2)
+    return 0
+
+
+def fureur_du_totem(attaquant, cible, equipe):
+    degats = int(attaquant.atk * 2.00)
+    reels = cible.prendre_degats(degats)
+    soin_total = int(reels * 0.30)
+    for membre in equipe:
+        effet_soin(membre, int(soin_total / len(equipe)))
+    return reels
+
 
 def obtenir_attaques_disponibles(hero):
     return [

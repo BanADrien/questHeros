@@ -88,7 +88,8 @@ def saignement(cible, tours, montant):
 
 
 
-# EFFETS D'ITEMS SPÉCIAUX
+# EFFETS Specifiques perso
+
 
 
 

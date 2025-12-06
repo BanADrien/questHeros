@@ -170,6 +170,34 @@ def init_db():
                 }
             }
         },
+         {
+            "nom": "Chaman",
+            "atk": 15,
+            "def": 10,
+            "pv_max": 90,
+            "stack": 0,
+            "attaques": {
+                "base": {
+                    "nom": "totem",
+                    "cooldown": 0,
+                    "description": "¨pose un totem aléatoire qui aura un effet parmis : regen, brulure, poison, ou dégats",
+                    "fonction": "totem"
+                },
+                "special": {
+                    "nom": "Totem de guerre",
+                    "cooldown": 3,
+                    "description": "boost l'attaque des membres de l'équipe de 20% de leurs attaque pour 2 tours",
+                    "fonction": "totem_de_guerre"
+                },
+                "ultime": {
+                    "nom": "Totem de Sang",
+                    "cooldown": 5,
+                    "utilisations_max": 2,
+                    "description": "invoque un Totem qui inflige 200% de l''attaque du chaman pendant 3 tours et soigne l'équipe de 30% des dégats infligés",
+                    "fonction": "totem_de_sang"
+                }
+            }
+        },
     ]
 
     monstres = [
@@ -181,14 +209,17 @@ def init_db():
         {"nom": "Golem", "atk": 20, "def": 40, "pv_max": 160, "status": []},
         {"nom": "Dragon", "atk": 35, "def": 20, "pv_max": 300, "status": []},
         {"nom": "Demon", "atk": 60, "def": 30, "pv_max": 200, "status": []},
+        {"nom": "Ange", "atk": 80, "def": 40, "pv_max": 400, "status": []},
+        {"nom": "La Mort", "atk": 200, "def": 0, "pv_max": 100, "status": []},
+        
         
     ]
         
     raretes = {
-        "commun": 50,
+        "commun": 40,
         "peu_commun": 30,
-        "rare": 15,
-        "legendaire": 5
+        "rare": 20,
+        "legendaire": 10
     }
 
     # Items organisés par rareté
@@ -211,7 +242,7 @@ def init_db():
             {
                 "nom": "Potion de soin mineure",
                 "description": "Restaure quelques PV",
-                "stats_bonus": {"pv_max": 5},
+                "stats_bonus": {"pv": 5},
                 "effet": None,
                 "rarete": "commun"
             }
