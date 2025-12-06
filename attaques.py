@@ -64,7 +64,7 @@ from Heroes_Attacks.chaman import totem, totem_de_guerre, totem_de_survie
 from Heroes_Attacks.villagois import coup_de_fourche, encouragement, transformation_hero, frappe_heroique, motivation_du_hero, transformation_legende, frappe_legendaire, motivation_legendaire, aucun_rival
 
 # =========================== druidesse
-from Heroes_Attacks.druidesse import methamorphose, dard_venimeux, paralysie
+from Heroes_Attacks.druidesse import methamorphose, dard_venimeux, paralysie, cours_particulier, invention, auto_guerison, carapace_partagee
 
 
 

@@ -1,6 +1,7 @@
 
 from db_init import get_db
 from models import Combattant
+from items import generer_loot, choisir_rarete, obtenir_item
 # effects.py
 
 
@@ -106,7 +107,10 @@ def stun(cible, tours):
     })
     print(f" {cible.nom} est étourdi et ne pourra pas agir pendant {tours-1} tours.")
 # EFFETS Speciaux
-
+def creer_item(attaquant, equipe, rarete_list, items_par_rarete):
+    # obtenir_item(attaquant, nom_item)
+    item = obtenir_item(equipe, rarete_list, items_par_rarete)
+    
 def transformation(attaquant, nouvelle_forme, equipe):
     db = get_db()
     

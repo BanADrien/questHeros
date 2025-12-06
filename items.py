@@ -11,7 +11,7 @@ def choisir_rarete(raretes):
         if rand <= cumul:
             return rarete
     
-    return "commun"  # Fallback au cas où
+    return "commun"  
 
 
 def generer_loot(raretes, items_par_rarete):
@@ -25,11 +25,11 @@ def generer_loot(raretes, items_par_rarete):
     return Item(item_data)
 
 
-def obtenir_loot_apres_combat(equipe, raretes, items_par_rarete):
+def obtenir_item(equipe, raretes, items_par_rarete):
     item = generer_loot(raretes, items_par_rarete)
     
     if item:
-        print(f"\nVous avez trouvé : {item.nom} ({item.rarete})")
+        print(f"\nVous avez obtenu un item : {item.nom} ({item.rarete})")
         print(f"   {item.description}")
         print("\nChoisissez un héros pour équiper cet item:")
         

@@ -409,7 +409,7 @@ def init_db():
                 },
                 "special": {
                     "nom": "invention",
-                    "cooldown": 3,
+                    "cooldown": 0,
                     "description": "crée un objet aléatoire",
                     "fonction": "invention"
                 },
@@ -437,13 +437,6 @@ def init_db():
         
         
     ]
-        
-    raretes = {
-        "commun": 40,
-        "peu_commun": 30,
-        "rare": 20,
-        "legendaire": 10
-    }
 
     # Items organisés par rareté
     items = {
@@ -558,7 +551,6 @@ def init_db():
     db.perso_annexe.delete_many({})
     db.monstres.delete_many({})
     db.items.delete_many({})
-    db.raretes.delete_many({})
     db.scores.delete_many({})
     
 
@@ -572,6 +564,5 @@ def init_db():
             liste_items.append(it)
 
     db.items.insert_many(liste_items)
-    db.raretes.insert_one(raretes)
 
     print(" BDD initialisée")

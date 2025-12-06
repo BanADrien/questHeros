@@ -2,7 +2,7 @@ import random
 import os
 from datetime import datetime
 from models import Combattant
-from items import obtenir_loot_apres_combat
+from items import obtenir_item
 from hero_turn import tour_hero
 from db_init import get_db
 from utils import (
@@ -62,7 +62,7 @@ class Partie:
     def charger_items(self):
 
         # Charger les taux de rareté
-        self.raretes = db.raretes.find_one({}, {"_id": 0}) or {}
+        self.raretes = {'commun': 40, 'peu_commun': 30, 'rare': 20, 'legendaire': 10}
 
         # Charger tous les items
         items = list(db.items.find({}, {"_id": 0}))
@@ -205,7 +205,7 @@ class Partie:
                 victoires += 1
                 afficher_resultat_combat(True, monstre, victoires, len(self.monstres))
                 
-                obtenir_loot_apres_combat(self.equipe, self.raretes, self.items_par_rarete)
+                obtenir_item(self.equipe, self.raretes, self.items_par_rarete)
 
                 
                 if monstre != self.monstres[-1]:
