@@ -3,6 +3,9 @@
 import random
 from utils import afficher_equipe
 from effects import effet_soin, buff_stat, brulure, effet_vol_de_vie, saignement, poison
+from db_init import get_db
+from models import Combattant
+
 
 
 def executer_attaque(attaquant, cible, equipe, type_attaque, attaque_info):
@@ -27,7 +30,17 @@ def executer_attaque(attaquant, cible, equipe, type_attaque, attaque_info):
     return degats_total
 
 
+def transformation(attaquant, nouvelle_forme, equipe):
+    db = get_db()
     
+    forme_data = db.perso_annexe.find_one({"nom": nouvelle_forme})
+    forme_data.pop("_id", None)
+    
+    forme_obj = Combattant(forme_data, est_heros=True)
+    index = equipe.index(attaquant)
+    print(f"> {attaquant.nom} se transforme en {forme_obj.nom} !")
+    equipe[index] = forme_obj
+    return 0
 # spells pour chaque personnages 
 
 #  archer
@@ -108,10 +121,10 @@ def hache_sauvage(attaquant, cible, equipe):
 def echauffement(attaquant, cible, equipe):
     degats = int(attaquant.atk * 0.20)
     reels = cible.prendre_degats(degats)
-    #  commme la brulure rajouter une fonction d'effet de boost
-    attaquant.atk += 5  
+    attaque = attaquant.atk * 0.25
+    buff_stat(attaquant, "atk", int(attaque), 3)
     attaquant.stack += 2
-    print(f"> {attaquant.nom} gagne 5 points d'attaque (nouvelle ATK : {attaquant.atk}) et 2 stacks de rage (total : {attaquant.stack})")
+    print(f"> {attaquant.nom} gagne {int(attaque)} points d'attaque (nouvelle ATK : {attaquant.atk}) pendant 2 tours et 2 stacks de rage (total : {attaquant.stack})")
     return reels
 
 def dechainement_totale(attaquant, cible, equipe):
@@ -128,24 +141,23 @@ def coup_de_bouclier(attaquant, cible, equipe):
     reels = cible.prendre_degats(degats)
     return reels
 
-def benediction(attaquant, cible, equipe):
+def priere(attaquant, cible, equipe):
     soin_total = 0
+    soin = 10
     for membre in equipe:
-        pv_manquants = membre.pv_max - membre.pv
-        soin = int(pv_manquants * 0.20)
         membre.pv = min(membre.pv_max, membre.pv + soin)
         soin_total += soin
         print(f"> {membre.nom} récupère {soin} PV ")
     afficher_equipe(equipe)
     return 0
 
-def chatiment(attaquant, cible, equipe):
+def benediction(attaquant, cible, equipe):
     
     montant_boost_def = int(attaquant.defense * 0.50)
     
     
     for membre in equipe:
-        montant = int((membre.pv_max - membre.pv) * 0.30)
+        montant = int(membre.pv_max * 0.30)
         buff_stat(membre, "defense", montant_boost_def, 3)
         effet_soin(membre, montant)
     return 0
@@ -154,9 +166,9 @@ def chatiment(attaquant, cible, equipe):
 # hemomencien
 
 def extraction_de_sang(attaquant, cible, equipe):
-    degats = int(attaquant.atk * 0.60)
+    degats = int(attaquant.atk * 0.50)
     reels = cible.prendre_degats(degats)
-    soin = effet_vol_de_vie(reels, 30, attaquant)  
+    soin = effet_vol_de_vie(reels, 50, attaquant)  
     attaquant.stack += soin
     print(f" points de stack total: {attaquant.stack}")
     return reels
@@ -198,7 +210,6 @@ def assassinat (attaquant, cible, equipe):
     return reels
 
 # chaman 
-#                     "description": "¨pose un totem aléatoire qui aura un effet parmis : regen, brulure, poison, ou dégats",
 
 def totem_regen(attaquant, cible, equipe):
     soin_total = 0
@@ -233,14 +244,84 @@ def totem_de_guerre(attaquant, cible, equipe):
         buff_stat(membre, "atk", montant_boost_atk, 2)
     return 0
 
-
-def fureur_du_totem(attaquant, cible, equipe):
+def totem_de_sang(attaquant, cible, equipe):
     degats = int(attaquant.atk * 2.00)
     reels = cible.prendre_degats(degats)
     soin_total = int(reels * 0.30)
     for membre in equipe:
         effet_soin(membre, int(soin_total / len(equipe)))
     return reels
+
+# villagois
+
+def coup_de_fourche(attaquant, cible, equipe):
+    degats = int(attaquant.atk * 0.50)
+    reels = cible.prendre_degats(degats)
+    return reels
+
+def encouragement(attaquant, cible, equipe):
+    for membre in equipe:
+        # ne pas compter le villagois
+        if membre != attaquant:
+            for attaque in membre.cooldowns:
+                if membre.cooldowns[attaque] > 0:
+                    membre.cooldowns[attaque] = max(0, membre.cooldowns[attaque] - 1)
+                    print(f"> Cooldown de l'attaque {attaque} de {membre.nom} réduit à {membre.cooldowns[attaque]}")
+    return 0
+
+def transformation_hero(attaquant, cible, equipe):
+    
+    transformation(attaquant, "Héro", equipe)
+    
+    return 0
+
+# héro
+
+    
+def frappe_heroique(attaquant, cible, equipe):
+    degats = int(attaquant.atk * 1.50)
+    reels = cible.prendre_degats(degats)
+    return reels
+
+def motivation_du_hero(attaquant, cible, equipe):
+    degats = int(attaquant.atk * 1)
+    reels = cible.prendre_degats(degats)
+    return reels
+
+def transformation_legende(attaquant, cible, equipe):
+    
+    transformation(attaquant, "Légende", equipe)
+    
+    return 0
+
+
+# légende
+def frappe_legendaire(attaquant, cible, equipe):
+    reels = frappe_heroique(attaquant, cible, equipe) 
+    if cible.pv / cible.pv_max < 0.20:
+        reels += cible.prendre_degats_directs(cible.pv)  
+        print(f">{cible.nom} est instantanément tué !")
+    return reels
+
+
+def resurrection(attaquant, cible, equipe):
+    membres_morts = [membre for membre in equipe if not membre.est_vivant()]
+    if not membres_morts:
+        print("Aucun membre mort à ressusciter.")
+        return 0
+
+    membre_a_ressusciter = random.choice(membres_morts)
+    membre_a_ressusciter.pv = int(membre_a_ressusciter.pv_max)
+    print(f"> {membre_a_ressusciter.nom} a été ressuscité")
+    return 0
+
+def aucun_rival(attaquant, cible, equipe):
+    degats = int(cible.pv)
+    reels = cible.prendre_degats_directs(degats)
+    return reels
+
+
+
 
 
 def obtenir_attaques_disponibles(hero):

@@ -74,16 +74,16 @@ def init_db():
                     "fonction": "coup_de_bouclier"
                 },
                 "special": {
-                    "nom": "bénédiction",
-                    "cooldown": 3,
-                    "description": "Soigne l'équipe de 20% de leurs pv manquant chacun",
-                    "fonction": "benediction"
+                    "nom": "prière",
+                    "cooldown": 2,
+                    "description": "Soigne l'équipe de 10 PV chacun",
+                    "fonction": "priere"
                 },
                 "ultime": {
-                    "nom": "Chatiment",
-                    "cooldown": 5,
+                    "nom": "bénédiction",
+                    "cooldown": 4,
                     "description": "soigne l'équipe de 30% et augmente leurs défense de 50% de la défense du paladin pour 3 tours",
-                    "fonction": "chatiment"
+                    "fonction": "benediction"
                 }
             }
         },
@@ -108,7 +108,6 @@ def init_db():
                 "ultime": {
                     "nom": "mal phénoménal",
                     "cooldown": 5,
-                    "utilisations_max": 2,
                     "description": "inflige des dégats fixes de 30% des pv manquant de la cible plus 100% de l'attaque du mage",
                     "fonction": "mal_phenomenal"
                 }
@@ -124,7 +123,7 @@ def init_db():
                 "base": {
                     "nom": "extraction de sang",
                     "cooldown": 0,
-                    "description": "inflige 25% de l'attaque et soigne de 50% des dégats infligés et stock les pv volés en stack de sang",
+                    "description": "inflige 50% de l'attaque et soigne de 50% des dégats infligés et stock les pv volés en stack de sang",
                     "fonction": "extraction_de_sang"
                 },
                 "special": {
@@ -135,8 +134,7 @@ def init_db():
                 },
                 "ultime": {
                     "nom": "siphonage total",
-                    "cooldown": 5,
-                    "utilisations_max": 2,
+                    "cooldown": 4,
                     "description": "inflige des dégats fixes de 200% des degats et recupère 100% des dégats infligés en pv",
                     "fonction": "siphonage_total"
                 }
@@ -164,7 +162,6 @@ def init_db():
                 "ultime": {
                     "nom": "assassinat",
                     "cooldown": 5,
-                    "utilisations_max": 2,
                     "description": "inflige des dégats fixes de 200% si la cible à moin de 20% de ses pv elle est éxecutée",
                     "fonction": "assassinat"
                 }
@@ -192,14 +189,96 @@ def init_db():
                 "ultime": {
                     "nom": "Totem de Sang",
                     "cooldown": 5,
-                    "utilisations_max": 2,
                     "description": "invoque un Totem qui inflige 200% de l''attaque du chaman pendant 3 tours et soigne l'équipe de 30% des dégats infligés",
                     "fonction": "totem_de_sang"
                 }
             }
         },
+        {
+            "nom": "Villagois",
+            "atk": 10,
+            "def": 3,
+            "pv_max": 65,
+            "stack": 0,
+            "attaques": {
+                "base": {
+                    "nom": "coup de fourche",
+                    "cooldown": 0,
+                    "description": "inflige 50% de l'attaque",
+                    "fonction": "coup_de_fourche"
+                },
+                "special": {
+                    "nom": "encouragement",
+                    "cooldown": 3,
+                    "description": "reduit les cooldowns de 1 pour tous les membres de l'équipe",
+                    "fonction": "encouragement"
+                },
+                "ultime": {
+                    "nom": "???",
+                    "cooldown": 0,
+                    "description": "???",
+                    "fonction": "transformation_hero"
+                }
+            }
+        },
     ]
-
+    perso_annexe = [
+        {
+            "nom": "Héro",
+            "atk": 35,
+            "def": 20,
+            "pv_max": 150,
+            "stack": 0,
+            "attaques": {
+                "base": {
+                    "nom": "Frappe Héroïque",
+                    "cooldown": 0,
+                    "description": "inflige 150% de l'attaque",
+                    "fonction": "frappe_heroique"
+                },
+                "special": {
+                    "nom": "motivation du héro",
+                    "cooldown": 4,
+                    "description": "reduit les cooldowns de 1 pour tous les membres de l'équipe et boost l'attque et la défense des membres de 20% des stats corespondantes du héro pour 2 tours",
+                    "fonction": "motivation_du_hero"
+                },
+                "ultime": {
+                    "nom": "Second éveil",
+                    "cooldown": 0,
+                    "description": "???",
+                    "fonction": "transformation_legende"
+                }
+            }
+        },
+        {
+            "nom": "Légende",
+            "atk": 60,
+            "def": 40,
+            "pv_max": 250,
+            "stack": 0,
+            "attaques": {
+                "base": {
+                    "nom": "Frappe légendaire",
+                    "cooldown": 0,
+                    "description": "inflige 150% de l'attaque et tue sous 20% des pv du monstre",
+                    "fonction": "frappe_legendaire"
+                },
+                "special": {
+                    "nom": "résurection",
+                    "cooldown": 4,
+                    "description": "réssucite un membre de l'équipe",
+                    "fonction": "resurrection"
+                },
+                "ultime": {
+                    "nom": "Aucun rival",
+                    "cooldown": 5,
+                    "description": "élimine instantanément le monstre",
+                    "fonction": "aucun_rival"
+                }
+            }
+        },
+    ]
+        
     monstres = [
         {"nom": "Gobelin", "atk": 10, "def": 5, "pv_max": 50, "status": []},
         {"nom": "Squelette", "atk": 15, "def": 4, "pv_max": 70, "status": []},
@@ -210,7 +289,7 @@ def init_db():
         {"nom": "Dragon", "atk": 35, "def": 20, "pv_max": 300, "status": []},
         {"nom": "Demon", "atk": 60, "def": 30, "pv_max": 200, "status": []},
         {"nom": "Ange", "atk": 80, "def": 40, "pv_max": 400, "status": []},
-        {"nom": "La Mort", "atk": 200, "def": 0, "pv_max": 100, "status": []},
+        {"nom": "La Mort", "atk": 200, "def": 0, "pv_max": 300, "status": []},
         
         
     ]
@@ -332,6 +411,7 @@ def init_db():
 
         
     db.personnages.delete_many({})
+    db.perso_annexe.delete_many({})
     db.monstres.delete_many({})
     db.items.delete_many({})
     db.raretes.delete_many({})
@@ -339,6 +419,7 @@ def init_db():
     
 
     db.personnages.insert_many(personnages)
+    db.perso_annexe.insert_many(perso_annexe)
     db.monstres.insert_many(monstres)
     liste_items = []
     for rarete, items_liste in items.items():
