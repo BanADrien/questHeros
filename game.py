@@ -31,7 +31,7 @@ class Partie:
         print("SÉLECTION DE L'ÉQUIPE")
         print("="*50)
         
-        for i in range(3):
+        for i in range(1):
             print(f"\nChoix du héros {i+1}/3:")
             print("-" * 40)
             # METTRE EN GRAS UN TEXT EN TERMINAL : \033[1mVOTRE TEXTE\033[0m pour 

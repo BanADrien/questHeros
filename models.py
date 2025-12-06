@@ -69,30 +69,51 @@ class Combattant:
             self.buffs.remove(buff)
     
     def appliquer_status(self):
-        status_a_supprimer = []
+
+        fusion = {}
         for s in self.status:
             stat = s["stat"]
             montant = s["montant"]
-            s["tours_restants"] -= 1
 
-            if stat == "brulure":
-                self.pv = max(0, self.pv - montant)
-                print(f"> {self.nom} subit {montant} dégâts de brûlure ! (PV : {self.pv}/{self.pv_max})")
-            if stat == "poison":
-                self.pv = max(0, self.pv - montant)
-                print(f"> {self.nom} subit {montant} dégâts de poison ! (PV : {self.pv}/{self.pv_max})")
-            if stat == "saignement":
-                self.pv = max(0, self.pv - montant)
-                print(f"> {self.nom} subit {montant} dégâts de saignement ! (PV : {self.pv}/{self.pv_max})")
-            if stat == "regen":
-                self.pv = min(self.pv_max, self.pv - montant)
-                print(f"> {self.nom} régénère {-montant} PV ! (PV : {self.pv}/{self.pv_max})")
-            
-            if s["tours_restants"] <= 0:
-                status_a_supprimer.append(s)
+            if stat not in fusion:
+                fusion[stat] = {"total": 0, "montants": [], "objs": []}
 
+            fusion[stat]["total"] += montant
+            fusion[stat]["montants"].append(montant)
+            fusion[stat]["objs"].append(s)
+
+        # --- APPLICATION DES STAT FUSIONNÉS ---
+        status_a_supprimer = []
+
+        for stat, data in fusion.items():
+            total = data["total"]
+            montants = data["montants"]
+            objets = data["objs"]
+
+            # Appliquer le total une seule fois
+            if stat in ["brulure", "poison", "saignement"]:
+                self.pv = max(0, self.pv - total)
+                print(f"> {self.nom} subit {total} dégâts de {stat} ! (PV : {self.pv}/{self.pv_max})")
+
+            elif stat == "regen":
+                self.pv = min(self.pv_max, self.pv - total)
+                print(f"> {self.nom} régénère {-total} PV ! (PV : {self.pv}/{self.pv_max})")
+
+            # décrémenter 1 seul effet (le premier) et supprimer les autres
+            objets[0]["tours_restants"] -= 1
+            if objets[0]["tours_restants"] <= 0:
+                status_a_supprimer.append(objets[0])
+
+            # supprimer tous les doublons
+            for extra in objets[1:]:
+                status_a_supprimer.append(extra)
+
+        # --- SUPPRESSION DES STAT EXPIRÉS ---
         for s in status_a_supprimer:
-            self.status.remove(s)
+            if s in self.status:
+                self.status.remove(s)
+
+
     
     def equiper_item(self, item):
         """Équipe un item sur le combattant"""

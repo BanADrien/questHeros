@@ -199,12 +199,12 @@ def init_db():
                 "special": {
                     "nom": "Totem de guerre",
                     "cooldown": 3,
-                    "description": "boost l'attaque des membres de l'équipe de 20% de leurs attaque pour 2 tours",
+                    "description": "Totem qui boost l'attaque des membres de l'équipe de 20% de leurs attaque pour 2 tours",
                     "fonction": "totem_de_guerre"
                 },
                 "ultime": {
                     "nom": "Totem de survie",
-                    "cooldown": 0,
+                    "cooldown": 5,
                     "description": "invoque un Totem qui donne regen 10 et un buff de défense de 10 pendant 3 tours",
                     "fonction": "totem_de_survie"
                 }
