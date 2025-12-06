@@ -98,8 +98,13 @@ def saignement(cible, tours, montant):
     })
     print(f" {cible.nom} saigne et subira {montant} dégâts pendant {tours} tours.")
 
-
-
+def stun(cible, tours):
+    cible.status.append({
+        "stat": "stun",
+        "montant": 1,
+        "tours_restants": tours
+    })
+    print(f" {cible.nom} est étourdi et ne pourra pas agir pendant {tours-1} tours.")
 # EFFETS Speciaux
 
 def transformation(attaquant, nouvelle_forme, equipe):

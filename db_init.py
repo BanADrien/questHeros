@@ -16,6 +16,7 @@ def init_db():
             "def": 7,
             "pv_max": 90,
             "stack": 0,
+            "peut_attaquer": True,
             "attaques": {
                 "base": {
                     "nom": "Tir précis",
@@ -45,6 +46,7 @@ def init_db():
             "def": 6,
             "pv_max": 105,
             "stack": 0,
+            "peut_attaquer": True,
             "attaques": {
                 "base": {
                     "nom": "Hache sauvage",
@@ -73,6 +75,7 @@ def init_db():
             "atk": 14,
             "def": 12,
             "pv_max": 110,
+            "peut_attaquer": True,
             "attaques": {
                 "base": {
                     "nom": "Coup de bouclier",
@@ -101,7 +104,7 @@ def init_db():
             "atk": 20,
             "def": 5,
             "pv_max": 85,
-            "stack": 0,
+            "peut_attaquer": True,
             "attaques": {
                 "base": {
                     "nom": "arcane simple",
@@ -130,7 +133,7 @@ def init_db():
             "atk": 15,
             "def": 0,
             "pv_max": 100,
-            "stack": 0,
+            "peut_attaquer": True,
             "attaques": {
                 "base": {
                     "nom": "extraction de sang",
@@ -159,7 +162,7 @@ def init_db():
             "atk": 30,
             "def": 5,
             "pv_max": 70,
-            "stack": 0,
+            "peut_attaquer": True,
             "attaques": {
                 "base": {
                     "nom": "incision",
@@ -188,7 +191,7 @@ def init_db():
             "atk": 15,
             "def": 10,
             "pv_max": 90,
-            "stack": 0,
+            "peut_attaquer": True,
             "attaques": {
                 "base": {
                     "nom": "totem",
@@ -217,6 +220,7 @@ def init_db():
             "atk": 10,
             "def": 3,
             "pv_max": 65,
+            "peut_attaquer": True,
             "attaques": {
                 "base": {
                     "nom": "coup de fourche",
@@ -245,6 +249,8 @@ def init_db():
             "atk": 0,
             "def": 0,
             "pv_max": 100,
+            "stack": 0,
+            "peut_attaquer": True,
             "attaques": {
                 "base": {
                     "nom": "métamorphose",
@@ -276,7 +282,7 @@ def init_db():
             "atk": 35,
             "def": 20,
             "pv_max": 150,
-            "stack": 0,
+            "peut_attaquer": True,
             "attaques": {
                 "base": {
                     "nom": "Frappe Héroïque",
@@ -305,7 +311,7 @@ def init_db():
             "atk": 60,
             "def": 40,
             "pv_max": 250,
-            "stack": 0,
+            "peut_attaquer": True,
             "attaques": {
                 "base": {
                     "nom": "Frappe légendaire",
@@ -335,6 +341,7 @@ def init_db():
             "def": 5,
             "pv_max": 100,
             "stack": 0,
+            "peut_attaquer": True,
             "attaques": {
                 "base": {
                     "nom": "Dard venimeux",
@@ -344,36 +351,7 @@ def init_db():
                 },
                 "special": {
                     "nom": "Paralysie",
-                    "cooldown": 2,
-                    "description": "paralyse l'ennemi l'empêchant d'attaquer pendant 1 tour",
-                    "fonction": "paralysie"
-                },
-                "ultime": {
-                    "nom": "méthamorphose",
-                    "cooldown": 3,
-                    "description": "se transforme en une autre bête",
-                    "fonction": "methamorphose"
-                }
-            }
-        },
-        {
-            "nom": "Arraignée géante",
-            "description": "bête capable d'empoisonner ou de paralyser ses ennemis.",
-            "type_perso": "attaquant",
-            "atk": 20,
-            "def": 5,
-            "pv_max": 100,
-            "stack": 0,
-            "attaques": {
-                "base": {
-                    "nom": "Dard venimeux",
                     "cooldown": 0,
-                    "description": "inflige 80% de l'attaque et empoisonne la cible pour 3 tours",
-                    "fonction": "dard_venimeux"
-                },
-                "special": {
-                    "nom": "Paralysie",
-                    "cooldown": 3,
                     "description": "paralyse l'ennemi l'empêchant d'attaquer pendant 1 tour",
                     "fonction": "paralysie"
                 },
@@ -402,7 +380,7 @@ def init_db():
                 },
                 "special": {
                     "nom": "carapace partagée",
-                    "cooldown": 3,
+                    "cooldown": 2,
                     "description": "boost la défense de toute l'équipe de 30 pendant 2 tours",
                     "fonction": "carapace_partagee"
                 },
@@ -446,16 +424,16 @@ def init_db():
     ]
         
     monstres = [
-        {"nom": "Gobelin", "atk": 10, "def": 5, "pv_max": 50, "status": []},
-        {"nom": "Squelette", "atk": 15, "def": 4, "pv_max": 70, "status": []},
-        {"nom": "Loup féroce", "atk": 15, "def": 6, "pv_max": 70, "status": []},
-        {"nom": "Orc", "atk": 20, "def": 8, "pv_max": 120, "status": []},
-        {"nom": "Troll", "atk": 25, "def": 10, "pv_max": 150, "status": []},
-        {"nom": "Golem", "atk": 20, "def": 40, "pv_max": 160, "status": []},
-        {"nom": "Dragon", "atk": 35, "def": 20, "pv_max": 300, "status": []},
-        {"nom": "Demon", "atk": 60, "def": 30, "pv_max": 200, "status": []},
-        {"nom": "Ange", "atk": 80, "def": 40, "pv_max": 400, "status": []},
-        {"nom": "La Mort", "atk": 200, "def": 0, "pv_max": 300, "status": []},
+        {"nom": "Gobelin", "atk": 10, "def": 5, "pv_max": 50, "status": [], "peut_attaquer": True},
+        {"nom": "Squelette", "atk": 15, "def": 4, "pv_max": 70, "status": [], "peut_attaquer": True},
+        {"nom": "Loup féroce", "atk": 15, "def": 6, "pv_max": 70, "status": [], "peut_attaquer": True},
+        {"nom": "Orc", "atk": 20, "def": 8, "pv_max": 120, "status": [], "peut_attaquer": True},
+        {"nom": "Troll", "atk": 25, "def": 10, "pv_max": 150, "status": [], "peut_attaquer": True},
+        {"nom": "Golem", "atk": 20, "def": 40, "pv_max": 160, "status": [], "peut_attaquer": True},
+        {"nom": "Dragon", "atk": 35, "def": 20, "pv_max": 300, "status": [], "peut_attaquer": True},
+        {"nom": "Demon", "atk": 60, "def": 30, "pv_max": 200, "status": [], "peut_attaquer": True},
+        {"nom": "Ange", "atk": 80, "def": 40, "pv_max": 400, "status": [], "peut_attaquer": True},
+        {"nom": "La Mort", "atk": 200, "def": 0, "pv_max": 300, "status": [], "peut_attaquer": True},
         
         
     ]

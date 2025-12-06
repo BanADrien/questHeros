@@ -91,15 +91,18 @@ class Partie:
             print(f"\nC'est au tour de {hero.nom}!")
             
             hero.appliquer_status()
-            afficher_details_attaque(hero)
-            attaques_dispo = obtenir_attaques_disponibles(hero)
-            
-            choix = self.choisir_attaque(hero)
-            type_attaque, attaque_info = attaques_dispo[choix - 1]
+            if hero.peut_attaquer == False:
+                continue
+            else:
+                afficher_details_attaque(hero)
+                attaques_dispo = obtenir_attaques_disponibles(hero)
+                
+                choix = self.choisir_attaque(hero)
+                type_attaque, attaque_info = attaques_dispo[choix - 1]
 
-            
-            executer_attaque(hero, monstre, self.equipe, type_attaque, attaque_info)
-            afficher_monstre(monstre)
+                
+                executer_attaque(hero, monstre, self.equipe, type_attaque, attaque_info)
+                afficher_monstre(monstre)
           
             gerer_cooldown_attaque(hero, type_attaque, attaque_info)
             # renitialiser le cooldown de l'attaque si il en possede 
@@ -138,14 +141,16 @@ class Partie:
         cibles_vivantes = [h for h in self.equipe if h.est_vivant()]
         if not cibles_vivantes:
             return
-        
-        cible = random.choice(cibles_vivantes)
-        print(f"\n{monstre.nom} attaque {cible.nom}!")
-        
-        degats = monstre.atk
-        degats_reels = cible.prendre_degats(degats)
-        print(f"{degats_reels} dégâts infligés à {cible.nom}!")
-        attente = input("Appuyez sur Entrée pour continuer...")
+        if monstre.peut_attaquer == False:
+            return
+        else:
+            cible = random.choice(cibles_vivantes)
+            print(f"\n{monstre.nom} attaque {cible.nom}!")
+            
+            degats = monstre.atk
+            degats_reels = cible.prendre_degats(degats)
+            print(f"{degats_reels} dégâts infligés à {cible.nom}!")
+            input("Appuyez sur Entrée pour continuer...")
         
         
         if not cible.est_vivant():

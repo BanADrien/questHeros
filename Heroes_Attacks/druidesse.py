@@ -1,4 +1,4 @@
-from effects import transformation, poison, buff_stat
+from effects import transformation, poison, buff_stat, stun
 from db_init import get_db
 def methamorphose(attaquant, cible, equipe):
     # faire choisir une forme
@@ -33,3 +33,17 @@ def methamorphose(attaquant, cible, equipe):
     except ValueError:
         print("Entrée invalide.")
     return 0
+
+# arraigée géante
+
+def dard_venimeux(attaquant, cible, equipe):
+    degats = int(attaquant.atk * 0.0)
+    reels = cible.prendre_degats(degats)
+    poison(cible, 3)
+    return reels
+
+def paralysie(attaquant, cible, equipe):
+    degats = int(attaquant.atk * 0.10)
+    reels = cible.prendre_degats(degats)
+    stun(cible, 2)
+    return reels

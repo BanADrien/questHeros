@@ -21,6 +21,7 @@ def executer_attaque(attaquant, cible, equipe, type_attaque, attaque_info):
     print(f"\n{attaquant.nom} utilise {attaque_info.get('nom','attaque inconnue')} !")
 
     # exécuter l’attaque
+    
     degats_total = fonction_attaque(attaquant, cible, equipe)
     if degats_total > 0:
         print(f"> {degats_total} dégâts infligés à {cible.nom} !")
@@ -64,7 +65,7 @@ from Heroes_Attacks.chaman import totem, totem_de_guerre, totem_de_survie
 from Heroes_Attacks.villagois import coup_de_fourche, encouragement, transformation_hero, frappe_heroique, motivation_du_hero, transformation_legende, frappe_legendaire, motivation_legendaire, aucun_rival
 
 # =========================== druidesse
-from Heroes_Attacks.druidesse import coup_de_griffe, embrasement_naturel, colere_de_la_nature
+from Heroes_Attacks.druidesse import methamorphose, dard_venimeux, paralysie
 
 
 

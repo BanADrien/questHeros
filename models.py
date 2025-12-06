@@ -8,6 +8,7 @@ class Combattant:
         self.pv_max = data["pv_max"]
         self.pv = self.pv_max
         self.stack = 0
+        self.peut_attaquer = True
         self.est_heros = est_heros
         
         if est_heros:
@@ -97,7 +98,9 @@ class Combattant:
             elif stat == "regen":
                 self.pv = min(self.pv_max, self.pv - total)
                 print(f"> {self.nom} régénère {-total} PV ! (PV : {self.pv}/{self.pv_max})")
-
+            elif stat == "stun":
+                self.peut_attaquer = False
+                print(f"> {self.nom} est étourdi et ne peut pas attaquer ce tour !")
             # décrémenter 1 seul effet (le premier) et supprimer les autres
             objets[0]["tours_restants"] -= 1
             if objets[0]["tours_restants"] <= 0:
@@ -107,15 +110,15 @@ class Combattant:
             for extra in objets[1:]:
                 status_a_supprimer.append(extra)
 
-        # --- SUPPRESSION DES STAT EXPIRÉS ---
+       
         for s in status_a_supprimer:
             if s in self.status:
                 self.status.remove(s)
+                self.peut_attaquer = True
 
 
     
     def equiper_item(self, item):
-        """Équipe un item sur le combattant"""
         self.items.append(item)
         
         # Appliquer les bonus de stats permanents
@@ -148,6 +151,7 @@ class Combattant:
                 params = item.effet.copy()
                 params.pop("fonction")  # Retirer le nom de fonction des params
                 fonction(self, **params)
+                
 
 
 class Item:
