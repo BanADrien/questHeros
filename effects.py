@@ -14,11 +14,13 @@ def effet_soin(cible, montant):
 
 
 def effet_regen(cible, montant):
-    soins_reels = min(montant, cible.pv_max - cible.pv)
-    if soins_reels > 0:
-        cible.pv += soins_reels
-        print(f"{cible.nom} régénère {soins_reels} PV ! (PV : {cible.pv}/{cible.pv_max})")
-    return soins_reels
+    montant = 0-montant
+    cible.status.append({
+        "stat": "regen",
+        "montant": montant,
+        "tours_restants": 3,
+    })
+    print(f" {cible.nom} bénéficiera de {-montant} pv de régénération pendant 3 tours.")
 
 def effet_vol_de_vie(degat, montant, attaquant):
     # montant est le pourcentage de regen en fonction des degats infligés

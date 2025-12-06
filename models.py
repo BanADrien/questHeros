@@ -84,6 +84,9 @@ class Combattant:
             if stat == "saignement":
                 self.pv = max(0, self.pv - montant)
                 print(f"> {self.nom} subit {montant} dégâts de saignement ! (PV : {self.pv}/{self.pv_max})")
+            if stat == "regen":
+                self.pv = min(self.pv_max, self.pv - montant)
+                print(f"> {self.nom} régénère {-montant} PV ! (PV : {self.pv}/{self.pv_max})")
             
             if s["tours_restants"] <= 0:
                 status_a_supprimer.append(s)

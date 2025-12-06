@@ -31,7 +31,7 @@ class Partie:
         print("SÉLECTION DE L'ÉQUIPE")
         print("="*50)
         
-        for i in range(1):
+        for i in range(3):
             print(f"\nChoix du héros {i+1}/3:")
             print("-" * 40)
             for id, perso in enumerate(personnages_dispo, start=1):
@@ -78,6 +78,7 @@ class Partie:
         
     def tour_heros(self, monstre):
         for hero in self.equipe:
+            
             if not hero.est_vivant():
                 continue
             
@@ -87,7 +88,7 @@ class Partie:
             afficher_etat_combat(monstre, self.equipe)
             print(f"\nC'est au tour de {hero.nom}!")
             
-           
+            hero.appliquer_status()
             afficher_details_attaque(hero)
             attaques_dispo = obtenir_attaques_disponibles(hero)
             

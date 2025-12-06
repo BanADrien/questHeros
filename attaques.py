@@ -2,7 +2,7 @@
 
 import random
 from utils import afficher_equipe
-from effects import effet_soin, buff_stat, brulure, effet_vol_de_vie, saignement, poison
+from effects import effet_soin, buff_stat, brulure, effet_vol_de_vie, saignement, poison, effet_regen
 from db_init import get_db
 from models import Combattant
 
@@ -47,7 +47,10 @@ def transformation(attaquant, nouvelle_forme, equipe):
 def tir_precis(attaquant, cible, equipe):
     degats = int(attaquant.atk * 0.75)
     reels = cible.prendre_degats_directs(degats)
+    if attaquant.stack < 15:
+        attaquant.stack += 1
     print(f">ignore la défense de {cible.nom} !")
+    print(f"> flèche total stacké : {attaquant.stack})")
     return reels
 
 
@@ -58,14 +61,19 @@ def double_tir(attaquant, cible, equipe):
         degats = int(attaquant.atk * (pct / 100))
         reels = cible.prendre_degats(degats)
         total += reels
+        if attaquant.stack < 15:
+            attaquant.stack += 1
         if not cible.est_vivant():
             break
+    
+    print(f"> flèche total stacké : {attaquant.stack})")
     return total
 
 
 def pluie_de_fleches(attaquant, cible, equipe):
     total = 0
-    for i in range(10):
+    nombre_fleches = attaquant.stack
+    for i in range(nombre_fleches):
         pct = random.randint(20, 100)
         degats = int(attaquant.atk * (pct / 100))
         reels = cible.prendre_degats(degats)
@@ -87,6 +95,7 @@ def arcane_simple(attaquant, cible, equipe):
     cible.defense = max(0, cible.defense - reduction)
 
     print(f"> Défense de {cible.nom} réduite de {reduction} (nouvelle DEF : {cible.defense})")
+    attaquant.atk += 1
     return reels
 
 
@@ -96,7 +105,7 @@ def fire_ball(attaquant, cible, equipe):
 
     brulure(cible, 3)
     
-    # effet brûlure à gérer dans Combattant.status_effects
+    attaquant.atk += 1
     return reels
 
 
@@ -107,6 +116,7 @@ def mal_phenomenal(attaquant, cible, equipe):
     degats = part_fixe + part_atk
 
     reels = cible.prendre_degats(degats)
+    attaquant.atk += 1
     return reels
 
 # berserker
@@ -212,11 +222,8 @@ def assassinat (attaquant, cible, equipe):
 # chaman 
 
 def totem_regen(attaquant, cible, equipe):
-    soin_total = 0
     for membre in equipe:
-        montant = int(membre.pv_max * 0.15)
-        effet_soin(membre, montant)
-        soin_total += montant
+        effet_regen(membre, 5)
     return 0
 
 def totem_brulure(attaquant, cible):
@@ -239,18 +246,21 @@ def totem(attaquant, cible, equipe):
     return totem_choisi(attaquant, cible, equipe)
 
 def totem_de_guerre(attaquant, cible, equipe):
-    montant_boost_atk = int(attaquant.atk * 0.30)
+   
     for membre in equipe:
+        montant_boost_atk = int(membre.atk * 0.30)
         buff_stat(membre, "atk", montant_boost_atk, 2)
     return 0
 
-def totem_de_sang(attaquant, cible, equipe):
-    degats = int(attaquant.atk * 2.00)
-    reels = cible.prendre_degats(degats)
-    soin_total = int(reels * 0.30)
+def totem_de_survie(attaquant, cible, equipe):
+    montant_boost_def = 10
+    montant_regen = 10
     for membre in equipe:
-        effet_soin(membre, int(soin_total / len(equipe)))
-    return reels
+        buff_stat(membre, "defense", montant_boost_def, 3)
+        effet_regen(membre, montant_regen)
+        
+        
+    return 0
 
 # villagois
 

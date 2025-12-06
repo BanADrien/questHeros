@@ -10,32 +10,37 @@ def init_db():
     personnages = [
         {
             "nom": "Archer",
+            "description": "Tireur d'élite spécialisé dans les attaques à distance",
+            "type de personnage": "attaquant",
             "atk": 18,
             "def": 7,
             "pv_max": 90,
+            "stack": 0,
             "attaques": {
                 "base": {
                     "nom": "Tir précis",
                     "cooldown": 0,
-                    "description": "Un tir précis à 75% qui ignore la défense",
+                    "description": "Un tir précis à 75% qui ignore la défense, stack 1 flèche",
                     "fonction": "tir_precis"
                 },
                 "special": {
                     "nom": "Double tir",
                     "cooldown": 1,
-                    "description": "Deux tirs rapides, dégats aléatoire entre 30% et 70% de l'attaque chacun plus ",
+                    "description": "Deux tirs rapides, dégats aléatoire entre 30% et 70% de l'attaque chacun plus, stack 2 flèche",
                     "fonction": "double_tir",
                 },
                 "ultime": {
                     "nom": "Pluie de flèches",
-                    "cooldown": 4,
-                    "description": "Barrage de flèches 10 flèches infligeant un pourcentage aléatoire entre 20 et 100% de l'attaque chacune",
+                    "cooldown": 1,
+                    "description": "tire autant de flèches que stacké(max15) un pourcentage aléatoire entre 20 et 100% de l'attaque chacune",
                     "fonction": "pluie_de_fleches"
                 }
             }
         },
         {
             "nom": "Berserker",
+            "description": "Guerrier offensif qui utilise de la furie pour augmenter ses dégats",
+            "type de personnage": "attaquant",
             "atk": 23,
             "def": 6,
             "pv_max": 105,
@@ -63,6 +68,8 @@ def init_db():
         },
         {
             "nom": "Paladin",
+            "description": "Guerrier sacré défensif avec des capacités de soin",
+            "type de personnage": "Tank/support",
             "atk": 14,
             "def": 12,
             "pv_max": 110,
@@ -89,9 +96,12 @@ def init_db():
         },
         {
             "nom": "Mage",
+            "description": "Utilisateur de magie offensive gagnant 1 atk a chaque sort lancé",
+            "type de personnage": "attaquant",
             "atk": 20,
             "def": 5,
             "pv_max": 85,
+            "stack": 0,
             "attaques": {
                 "base": {
                     "nom": "arcane simple",
@@ -115,6 +125,8 @@ def init_db():
         },
         {
             "nom": "hémomancien",
+            "description": "Maître du sang utilisant des attaques qui volent la vie et stockent du sang",
+            "type de personnage": "tank/attaquant",
             "atk": 15,
             "def": 0,
             "pv_max": 100,
@@ -142,6 +154,8 @@ def init_db():
         },
          {
             "nom": "Assasin",
+            "description": "Maître des attaques de status et degats lourds",
+            "type de personnage": "attaquant",
             "atk": 30,
             "def": 5,
             "pv_max": 70,
@@ -169,6 +183,8 @@ def init_db():
         },
          {
             "nom": "Chaman",
+            "description": "Invocateur de totems avec des capacités de soutien et de dégâts",
+            "type de personnage": "support",
             "atk": 15,
             "def": 10,
             "pv_max": 90,
@@ -187,10 +203,10 @@ def init_db():
                     "fonction": "totem_de_guerre"
                 },
                 "ultime": {
-                    "nom": "Totem de Sang",
-                    "cooldown": 5,
-                    "description": "invoque un Totem qui inflige 200% de l''attaque du chaman pendant 3 tours et soigne l'équipe de 30% des dégats infligés",
-                    "fonction": "totem_de_sang"
+                    "nom": "Totem de survie",
+                    "cooldown": 0,
+                    "description": "invoque un Totem qui donne regen 10 et un buff de défense de 10 pendant 3 tours",
+                    "fonction": "totem_de_survie"
                 }
             }
         },
