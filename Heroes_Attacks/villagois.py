@@ -26,7 +26,7 @@ def transformation_hero(attaquant, cible, equipe):
 
     
 def frappe_heroique(attaquant, cible, equipe):
-    degats = int(attaquant.atk * 1.50)
+    degats = int(attaquant.atk * 1.20)
     reels = cible.prendre_degats(degats)
     return reels
 
@@ -64,6 +64,8 @@ def motivation_legendaire(attaquant, cible, equipe):
     
     motivation_du_hero(attaquant, cible, equipe)
     ressuciter_avec_choix(attaquant, equipe)
+    
+    return 0
         
 
 def aucun_rival(attaquant, cible, equipe):

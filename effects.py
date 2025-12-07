@@ -117,7 +117,7 @@ def poison(cible, tours):
 
 
 def saignement(cible, tours, montant):
-    montant = montant / 100 *10
+    montant = montant * 0.15
     montant = int(-(-montant // 1))
     cible.status.append({
         "stat": "saignement",

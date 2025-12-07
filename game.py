@@ -6,13 +6,9 @@ from items import obtenir_item
 from hero_turn import tour_hero
 from db_init import get_db
 from utils import (
-    menu_principale_de_combat, afficher_etat_combat, afficher_details_attaque, 
+    menu_principale_de_combat, afficher_etat_combat, 
     afficher_intro_combat, afficher_tour, afficher_resultat_combat,
     afficher_equipe, choix_perso, choisir_nom_joueur
-)
-from attaques import (
-    executer_attaque, obtenir_attaques_disponibles, 
-    gerer_cooldown_attaque
 )
 
 db = get_db()
@@ -25,14 +21,16 @@ class Partie:
         self.raretes = []
         self.monstre_actuel_index = 0
         self.tour = 0
+        self.nom_joueur = ""
     
     def choisir_equipe(self):
+        self.nom_joueur = choisir_nom_joueur()
         personnages_dispo = list(db.personnages.find())
         print("\n" + "="*50)
         print("SÉLECTION DE L'ÉQUIPE")
         print("="*50)
         
-        for i in range(1):
+        for i in range(3):
             print(f"\nChoix du héros {i+1}/3:")
             print("-" * 40)
             choix_perso(personnages_dispo)
@@ -226,7 +224,7 @@ class Partie:
         self.sauvegarder_score(victoires)
     
     def sauvegarder_score(self, victoires):
-        nom_joueur = choisir_nom_joueur()
+        nom_joueur = self.nom_joueur
         db.scores.insert_one({
             "nom_joueur": nom_joueur,
             "date": datetime.now(),

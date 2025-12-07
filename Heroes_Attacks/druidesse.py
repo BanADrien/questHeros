@@ -9,7 +9,7 @@ def methamorphose(attaquant, cible, equipe):
     sauver_stack = attaquant.stack
     sauver_vie = attaquant.pv
     print(f"> la druidesse gagne 1 stack de transformation (total : {attaquant.stack})")
-    if attaquant.stack > 5:
+    if attaquant.stack < 5:
         formes_druidesse = ["Arraignée géante", "Tortue blindée", "Singe savant"]
     else : 
         print("La druidesse peut maintenant se transformer en bête mythique!")

@@ -287,7 +287,7 @@ def init_db():
                 "base": {
                     "nom": "Frappe Héroïque",
                     "cooldown": 0,
-                    "description": "inflige 150% de l'attaque",
+                    "description": "inflige 120% de l'attaque",
                     "fonction": "frappe_heroique"
                 },
                 "special": {
@@ -298,7 +298,7 @@ def init_db():
                 },
                 "ultime": {
                     "nom": "Second éveil",
-                    "cooldown": 0,
+                    "cooldown": 14,
                     "description": "???",
                     "fonction": "transformation_legende"
                 }
@@ -316,7 +316,7 @@ def init_db():
                 "base": {
                     "nom": "Frappe légendaire",
                     "cooldown": 0,
-                    "description": "inflige 150% de l'attaque et tue sous 20% des pv du monstre",
+                    "description": "inflige 120% de l'attaque et tue sous 10% des pv du monstre",
                     "fonction": "frappe_legendaire"
                 },
                 "special": {
@@ -327,7 +327,7 @@ def init_db():
                 },
                 "ultime": {
                     "nom": "Aucun rival",
-                    "cooldown": 5,
+                    "cooldown": 7,
                     "description": "élimine instantanément le monstre",
                     "fonction": "aucun_rival"
                 }
