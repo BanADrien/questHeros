@@ -8,7 +8,7 @@ from db_init import get_db
 from utils import (
     menu_principale_de_combat, afficher_etat_combat, afficher_details_attaque, 
     afficher_intro_combat, afficher_tour, afficher_resultat_combat,
-    afficher_equipe, afficher_monstre
+    afficher_equipe, choix_perso
 )
 from attaques import (
     executer_attaque, obtenir_attaques_disponibles, 
@@ -35,10 +35,7 @@ class Partie:
         for i in range(1):
             print(f"\nChoix du héros {i+1}/3:")
             print("-" * 40)
-            # METTRE EN GRAS UN TEXT EN TERMINAL : \033[1mVOTRE TEXTE\033[0m pour 
-            for id, perso in enumerate(personnages_dispo, start=1):
-                print(f"{id}. \033[1m{perso['nom']}\033[0m - ATK:{perso['atk']} DEF:{perso['def']} PV:{perso['pv_max']}")
-                print(f"{perso['type_perso']}, Description: {perso['description']}")
+            choix_perso(personnages_dispo)
             
             while True:
                 try:
@@ -118,7 +115,11 @@ class Partie:
 
             except ValueError:
                 print("Entrée invalide !")
-
+    def verif_focus(self, equipe):
+        for hero in equipe:
+            if hero.est_cible:
+                return hero
+        return None
     
     def tour_monstre(self, monstre):
         if not monstre.est_vivant():
@@ -130,7 +131,13 @@ class Partie:
         if monstre.peut_attaquer == False:
             return
         else:
-            cible = random.choice(cibles_vivantes)
+            
+            cible_focus = self.verif_focus(self.equipe)
+            if cible_focus:
+                cible = cible_focus
+                print(f"\n{monstre.nom} attaque {cible.nom} (focus)!")
+            else:
+                cible = random.choice(cibles_vivantes)
             print(f"\n{monstre.nom} attaque {cible.nom}!")
             
             degats = monstre.atk
@@ -195,7 +202,6 @@ class Partie:
         self.charger_monstres()
         
         print(f"\nVous allez affronter {len(self.monstres)} monstres!")
-        input("\nAppuyez sur Entrée pour commencer l'aventure...")
         
         victoires = 0
         for monstre in self.monstres:

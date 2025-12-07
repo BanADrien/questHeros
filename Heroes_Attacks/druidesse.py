@@ -1,34 +1,39 @@
-from effects import transformation, poison, buff_stat, stun, effet_soin, creer_item
+from effects import transformation, poison, buff_stat, stun, effet_soin, creer_item, brulure, ressuciter_avec_choix, effet_regen, saignement, prendre_focus
 from db_init import get_db
+from utils import choix_perso
 import random
 def methamorphose(attaquant, cible, equipe):
     # faire choisir une forme
     db = get_db()
     attaquant.stack += 1
+    sauver_stack = attaquant.stack
+    sauver_vie = attaquant.pv
     print(f"> la druidesse gagne 1 stack de transformation (total : {attaquant.stack})")
-    if attaquant.stack < 5:
+    if attaquant.stack > 5:
         formes_druidesse = ["Arraignée géante", "Tortue blindée", "Singe savant"]
     else : 
         print("La druidesse peut maintenant se transformer en bête mythique!")
-        formes_druidesse = ["Loup", "Phénix", "Licorne"]
+        formes_druidesse = ["Fenrir", "Phoenix", "Golem antique"]
     
     formes_dispo = []
     for forme in formes_druidesse:
+        
         forme_data = db.perso_annexe.find_one({"nom": forme})
-        if forme_data:
+        if forme_data and forme_data.get("nom") != attaquant.nom:
             formes_dispo.append(forme_data)
 
     print("Choisissez une forme de transformation :")
-    for id, forme in enumerate(formes_dispo, start=1):
-        if forme["nom"] != attaquant.nom:
-            print(f"{id}. \033[1m{forme['nom']}\033[0m - ATK:{forme['atk']} DEF:{forme['def']} PV:{forme['pv_max']}")
-            print(f"forme {forme['type_perso']} Description : {forme['description']}")
+    
+           
+    choix_perso(formes_dispo)
     choix = input("Entrez le numéro de la forme choisie : ")
     try:
         choix_int = int(choix)
         if 1 <= choix_int <= len(formes_dispo):
             forme_choisie = formes_dispo[choix_int - 1]["nom"]
             transformation(attaquant, forme_choisie, equipe)
+            attaquant.stack = sauver_stack
+            attaquant.pv = min(attaquant.pv_max, sauver_vie)
         else:
             print("Choix invalide.")
     except ValueError:
@@ -76,23 +81,7 @@ def cours_particulier(attaquant, cible, equipe):
     return 0
 
 def invention(attaquant, cible, equipe):
-        # Charger les taux de rareté
-        # self.raretes = db.raretes.find_one({}, {"_id": 0}) or {}
-
-        # # Charger tous les items
-        # items = list(db.items.find({}, {"_id": 0}))
-
-        # # Regrouper par rareté
-        # items_par_rarete = {}
-        # for item in items:
-        #     r = item["rarete"]
-        #     if r not in items_par_rarete:
-        #         items_par_rarete[r] = []
-        #     items_par_rarete[r].append(item)
-
-        # self.items_par_rarete = items_par_rarete
-
-        # charger les items et taux de rareté, les modifier en commun 70% et peut_commun 30%, puis créer un item aléatoire avec creer_item
+     
     db = get_db()
     raretes = {'commun': 70, 'peu_commun': 30}
     items_par_rarete = {}
@@ -107,4 +96,47 @@ def invention(attaquant, cible, equipe):
    
     creer_item(attaquant, equipe, raretes, items_par_rarete)
         
+    return 0
+
+
+# phoenix
+
+def feu_sacre(attaquant, cible, equipe):
+    degats = int(attaquant.atk * 1.00)
+    reels = cible.prendre_degats(degats)
+    brulure(cible, 5)
+    return reels
+
+def feu_resurecteur(attaquant, cible, equipe):
+    ressuciter_avec_choix(attaquant, equipe)
+    for membre in equipe:
+        effet_regen(membre, 10)
+        
+# fenrir
+
+def dechiquetage(attaquant, cible, equipe):
+    degats = int(attaquant.atk * 1.50)
+    reels = cible.prendre_degats(degats)
+    saignement(cible, 5, reels)
+    return reels
+    
+def hurlement(attaquant, cible, equipe):
+    stun(cible, 2)
+    return 0
+
+# golem antique
+
+def frappe_sismique(attaquant, cible, equipe):
+    degats = int(attaquant.defense * 0.50)
+    reels = cible.prendre_degats(degats)
+    prendre_focus(attaquant, cible, tours=2)
+    
+    return reels
+
+
+def inflexible(attaquant, cible, equipe):
+    montant_def = 30
+    montant_pv = attaquant.pv_max * 0.30
+    buff_stat(attaquant, "defense", montant_def, 3)
+    effet_soin(attaquant, montant_pv)
     return 0

@@ -21,7 +21,10 @@ def menu_demarage():
     print("4. Quitter")
 
 
-
+def choix_perso(perso_dispo):
+    for id, perso in enumerate(perso_dispo, start=1):
+        print(f"{id}. \033[1m{perso['nom']}\033[0m - ATK:{perso['atk']} DEF:{perso['def']} PV:{perso['pv_max']}")
+        print(f"{perso['type_perso']} / {perso['description']}\n")
 
 def afficher_details_attaque(hero):
     

@@ -22,7 +22,9 @@ def generer_loot(raretes, items_par_rarete):
         return None
     
     item_data = random.choice(items_disponibles)
+    
     return Item(item_data)
+
 
 
 def obtenir_item(equipe, raretes, items_par_rarete):

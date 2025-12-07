@@ -1,4 +1,4 @@
-from effects import transformation, buff_stat, resurrection
+from effects import transformation, buff_stat, resurrection, ressuciter_avec_choix
 
 
 def coup_de_fourche(attaquant, cible, equipe):
@@ -61,33 +61,9 @@ def frappe_legendaire(attaquant, cible, equipe):
 
 
 def motivation_legendaire(attaquant, cible, equipe):
+    
     motivation_du_hero(attaquant, cible, equipe)
-    # choisir un membre mort a ressuciter
-    membres_morts = [membre for membre in equipe if not membre.est_vivant()]
-    if membres_morts.len() == 1:
-        membre_a_ressusciter = membres_morts[0]
-        resurrection(membre_a_ressusciter)
-        print(f"> {membre_a_ressusciter.nom} a été ressuscité")
-        return 0
-    elif membres_morts.len() > 1:
-        print("> Membres morts disponibles pour la résurrection :")
-        for idx, membre in enumerate(membres_morts, start=1):
-            print(f"{idx}. {membre.nom}")
-        while True:
-            try:
-                choix = int(input("Choisissez un membre à ressusciter (numéro) : "))
-                if 1 <= choix <= len(membres_morts):
-                    membre_a_ressusciter = membres_morts[choix - 1]
-                    resurrection(membre_a_ressusciter)
-                    print(f"> {membre_a_ressusciter.nom} a été ressuscité")
-                    return 0
-                else:
-                    print("Choix invalide. Veuillez réessayer.")
-            except ValueError:
-                print("Entrée invalide. Veuillez entrer un numéro.")
-    else :
-        print("> Aucun membre mort à ressusciter.")
-    return 0
+    ressuciter_avec_choix(attaquant, equipe)
         
 
 def aucun_rival(attaquant, cible, equipe):

@@ -244,7 +244,7 @@ def init_db():
         },
         {
             "nom": "Druidesse",
-            "description": "Entité capable de se méthamorphoser en différentes créatures pour s'adapter aux besoins du combat, après 5 méthamorphoses elle se transforme définitivement en une bète mythique.",
+            "description": "Entité capable de se méthamorphoser en différentes créatures pour s'adapter aux besoins du combat, après 5 méthamorphoses elle se transforme en bêtes mythiques.",
             "type_perso": "polyvalent",
             "atk": 0,
             "def": 0,
@@ -409,13 +409,100 @@ def init_db():
                 },
                 "special": {
                     "nom": "invention",
-                    "cooldown": 0,
+                    "cooldown": 3,
                     "description": "crée un objet aléatoire",
                     "fonction": "invention"
                 },
                 "ultime": {
                     "nom": "méthamorphose",
                     "cooldown": 4,
+                    "description": "se transforme en une autre bête",
+                    "fonction": "methamorphose"
+                }
+            }
+        },
+        {
+            "nom": "Phoenix",
+            "description": "bête mythique capable de brûler ainsi que ressusciter et soigner ses alliés.",
+            "type_perso": "support/attaquant",
+            "atk": 30,
+            "def": 10,
+            "pv_max": 200,
+            "stack": 0,
+            "attaques": {
+                "base": {
+                    "nom": "Feu Sacré",
+                    "cooldown": 0,
+                    "description": "inflige 100% de l'attaque et brûlure pour 5 tours",
+                    "fonction": "feu_sacre"
+                },
+                "special": {
+                    "nom": "feu resurecteur",
+                    "cooldown": 4,
+                    "description": "ressuscite un allié et appliquer regen 10 aux alliés pour 3 tours",
+                    "fonction": "feu_resurecteur"
+                },
+                "ultime": {
+                    "nom": "méthamorphose",
+                    "cooldown": 5,
+                    "description": "se transforme en une autre bête",
+                    "fonction": "methamorphose"
+                }
+            }
+        },
+        {
+            "nom": "Fenrir",
+            "description": "bête mythique infligeant de gros dégats et appliquer saignement et de terrifier l'ennemie.",
+            "type_perso": "attaquant",
+            "atk": 30,
+            "def": 10,
+            "pv_max": 200,
+            "stack": 0,
+            "attaques": {
+                "base": {
+                    "nom": "déchiquetage",
+                    "cooldown": 0,
+                    "description": "inflige 150% de l'attaque et applique saignement pour 5 tours",
+                    "fonction": "dechiquetage"
+                },
+                "special": {
+                    "nom": "Hurlement",
+                    "cooldown": 4,
+                    "description": "terrifie l'ennemie ce qui le paralyse pendant 2 tours",
+                    "fonction": "hurlement"
+                },
+                "ultime": {
+                    "nom": "méthamorphose",
+                    "cooldown": 5,
+                    "description": "se transforme en une autre bête",
+                    "fonction": "methamorphose"
+                }
+            }
+        },
+        {
+            "nom": "Golem antique",
+            "description": "entité ancienne prennant toute les attaques adverses et capable de se soigner.",
+            "type_perso": "tank",
+            "atk": 10,
+            "def": 100,
+            "pv_max": 200,
+            "stack": 0,
+            "attaques": {
+                "base": {
+                    "nom": "frappe sismique",
+                    "cooldown": 0,
+                    "description": "inflige 25% de la défense du golem en dégats et prend forcement le prochain coup de l'ennemie",
+                    "fonction": "frappe_sismique"
+                },
+                "special": {
+                    "nom": "Inflexible",
+                    "cooldown": 4,
+                    "description": "se soigne de 30% de ses pv max et boost sa défense de 30 pour 3 tours",
+                    "fonction": "inflexible"
+                },
+                "ultime": {
+                    "nom": "méthamorphose",
+                    "cooldown": 5,
                     "description": "se transforme en une autre bête",
                     "fonction": "methamorphose"
                 }

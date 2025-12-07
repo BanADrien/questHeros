@@ -9,6 +9,7 @@ class Combattant:
         self.pv = self.pv_max
         self.stack = 0
         self.peut_attaquer = True
+        self.est_cible = False
         self.est_heros = est_heros
         
         if est_heros:
@@ -100,6 +101,8 @@ class Combattant:
                 print(f"> {self.nom} régénère {-total} PV ! (PV : {self.pv}/{self.pv_max})")
             elif stat == "stun":
                 self.peut_attaquer = False
+            elif stat == "prendre_focus":
+                self.est_cible = True
                 print(f"> {self.nom} est étourdi et ne peut pas attaquer ce tour !")
             # décrémenter 1 seul effet (le premier) et supprimer les autres
             objets[0]["tours_restants"] -= 1
@@ -114,7 +117,11 @@ class Combattant:
         for s in status_a_supprimer:
             if s in self.status:
                 self.status.remove(s)
-                self.peut_attaquer = True
+                if s["stat"] == "prendre_focus":
+                    self.est_cible = False
+                elif s["stat"] == "stun":
+                    self.peut_attaquer = True
+                
 
 
     

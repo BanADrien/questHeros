@@ -32,6 +32,7 @@ def effet_vol_de_vie(degat, montant, attaquant):
     return soin
 
 def resurrection(cible):
+    
     if cible.est_vivant():
         print(f"> {cible.nom} est déjà vivant et ne peut pas être ressuscité.")
         return False
@@ -39,6 +40,33 @@ def resurrection(cible):
     cible.pv = cible.pv_max // 2  # Ressusciter avec la moitié des PV max
     print(f"> {cible.nom} a été ressuscité avec {cible.pv} PV !")
     return True
+
+def ressuciter_avec_choix(attaquant, equipe):
+    membres_morts = [membre for membre in equipe if not membre.est_vivant()]
+    if len(membres_morts) == 1:
+        membre_a_ressusciter = membres_morts[0]
+        resurrection(membre_a_ressusciter)
+        print(f"> {membre_a_ressusciter.nom} a été ressuscité")
+        return 0
+    elif len(membres_morts) > 1:
+        print("> Membres morts disponibles pour la résurrection :")
+        for idx, membre in enumerate(membres_morts, start=1):
+            print(f"{idx}. {membre.nom}")
+        while True:
+            try:
+                choix = int(input("Choisissez un membre à ressusciter (numéro) : "))
+                if 1 <= choix <= len(membres_morts):
+                    membre_a_ressusciter = membres_morts[choix - 1]
+                    resurrection(membre_a_ressusciter)
+                    print(f"> {membre_a_ressusciter.nom} a été ressuscité")
+                    return 0
+                else:
+                    print("Choix invalide. Veuillez réessayer.")
+            except ValueError:
+                print("Entrée invalide. Veuillez entrer un numéro.")
+    else :
+        print("> Aucun membre mort à ressusciter.")
+    return 0
 
 # EFFETS DE BUFF
 
@@ -79,7 +107,6 @@ def brulure(cible, tours, montant=None):
 
 def poison(cible, tours):
     montant = (cible.pv_max - cible.pv) / 100 *10
-    
     montant = int(-(-montant // 1))
     cible.status.append({
         "stat": "poison",
@@ -123,7 +150,14 @@ def transformation(attaquant, nouvelle_forme, equipe):
     equipe[index] = forme_obj
     return 0
 
-
+def prendre_focus(attaquant, cible, tours=1):
+    attaquant.status.append({
+        "stat": "prendre_focus",
+        "montant": 1,
+        "tours_restants": tours,
+    })
+    print(f"> {cible.nom} prend le focus des attaques ennemies pour {tours} tours !")
+    return 0
 
 
 
