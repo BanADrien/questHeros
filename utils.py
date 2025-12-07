@@ -99,7 +99,12 @@ def afficher_equipe(equipe):
         afficher_pv_perso(perso)
     input("\nAppuyez sur Entrée pour continuer...")
 
-    
+def choisir_nom_joueur():
+    print("\n" + "="*50)
+    print("CHOIX DU NOM DU JOUEUR")
+    print("="*50)
+    nom_joueur = input("Entrez le nom de votre joueur : ")
+    return nom_joueur.strip()
 
 def afficher_scores():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -114,6 +119,7 @@ def afficher_scores():
     
     for i, score in enumerate(scores, start=1):
         equipe_str = ', '.join(score['equipe'])
+        print(f"joueur: {score['nom_joueur']}")
         print(f"{i}. {score['victoires']}/{score['total_monstres']} victoires")
         print(f"   Équipe: {equipe_str}")
         print(f"   Tours: {score['tours']}")

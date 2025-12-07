@@ -8,7 +8,7 @@ from db_init import get_db
 from utils import (
     menu_principale_de_combat, afficher_etat_combat, afficher_details_attaque, 
     afficher_intro_combat, afficher_tour, afficher_resultat_combat,
-    afficher_equipe, choix_perso
+    afficher_equipe, choix_perso, choisir_nom_joueur
 )
 from attaques import (
     executer_attaque, obtenir_attaques_disponibles, 
@@ -73,9 +73,6 @@ class Partie:
             items_par_rarete[r].append(item)
 
         self.items_par_rarete = items_par_rarete
-
-
-        
         
     def tour_heros(self, monstre):
         for hero in self.equipe:
@@ -229,7 +226,9 @@ class Partie:
         self.sauvegarder_score(victoires)
     
     def sauvegarder_score(self, victoires):
+        nom_joueur = choisir_nom_joueur()
         db.scores.insert_one({
+            "nom_joueur": nom_joueur,
             "date": datetime.now(),
             "equipe": [h.nom for h in self.equipe],
             "victoires": victoires,
