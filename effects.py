@@ -15,18 +15,19 @@ def effet_soin(cible, montant):
     return soins_reels
 
 
-def effet_regen(cible, montant):
-    montant = 0-montant
+def effet_regen(cible, montant, tours=3, print=True):
+    soin = 0-montant
     cible.status.append({
         "stat": "regen",
-        "montant": montant,
-        "tours_restants": 3,
+        "montant": soin,
+        "tours_restants": tours,
     })
-    print(f" {cible.nom} bénéficiera de {-montant} pv de régénération pendant 3 tours.")
+    if print:
+        print(f" {cible.nom} bénéficiera de {-soin} pv de régénération pendant {tours} tours.")
 
-def effet_vol_de_vie(degat, montant, attaquant):
+def effet_vol_de_vie(degat, attaquant):
     # montant est le pourcentage de regen en fonction des degats infligés
-    soin = int(degat * (montant / 100))
+    soin = int(degat * 0.30)
     attaquant.pv = min(attaquant.pv_max, attaquant.pv + soin)
     print(f"> {attaquant.nom} vole {soin} PV ! (PV : {attaquant.pv}/{attaquant.pv_max})")
     return soin
@@ -89,19 +90,32 @@ def buff_stat(cible, stat, montant, tours):
     nouvelle_valeur = getattr(cible, stat) if stat not in ["atk", "defense"] else (cible.atk if stat == "atk" else cible.defense)
     print(f"> {cible.nom} gagne +{montant} {stat} pour {tours} tours (nouvelle {stat.upper()} : {nouvelle_valeur})")
 
-
+def buff_stat_definitif(cible, stat, montant):
+    if stat == "atk":
+        cible.atk += montant
+    elif stat == "defense":
+        cible.defense += montant
+    elif stat == "pv_max":
+        cible.pv_max += montant
+        cible.pv += montant  
+    else:
+        setattr(cible, stat, getattr(cible, stat) + montant)
+    
+    nouvelle_valeur = getattr(cible, stat) if stat not in ["atk", "defense"] else (cible.atk if stat == "atk" else cible.defense)
+    print(f"> {cible.nom} gagne définitivement +{montant} {stat} (nouvelle {stat.upper()} : {nouvelle_valeur})")
 # EFFETS DE STATUS 
 
-def brulure(cible, tours, montant=None):
+def brulure(cible, tours):
     # Si pas de montant spécifié, utilise 5% des PV max
-    if montant is None:
-        montant = int(cible.pv_max * 0.05)
+    
+    montant = int(cible.pv_max * 0.05)
     
     cible.status.append({
         "stat": "brulure",
         "montant": montant,
         "tours_restants": tours
     })
+    print(tours)
     print(f" {cible.nom} est brûlé et subira {montant} dégâts pendant {tours} tours.")
 
 
@@ -116,9 +130,8 @@ def poison(cible, tours):
     print(f" {cible.nom} est empoisonné et subira {montant} dégâts pendant {tours} tours.")
 
 
-def saignement(cible, tours, montant):
-    montant = montant * 0.15
-    montant = int(-(-montant // 1))
+def saignement(cible, montant, tours):
+    montant = int(montant * 0.15)
     cible.status.append({
         "stat": "saignement",
         "montant": montant,
@@ -144,10 +157,20 @@ def transformation(attaquant, nouvelle_forme, equipe):
     forme_data = db.perso_annexe.find_one({"nom": nouvelle_forme})
     forme_data.pop("_id", None)
     
+    sauver_stack = attaquant.stack
+    sauver_vie = attaquant.pv
+    sauver_items = attaquant.items
+    
     forme_obj = Combattant(forme_data, est_heros=True)
+    
+    forme_obj.stack = sauver_stack
+    forme_obj.pv = min(sauver_vie, forme_obj.pv_max)
+    forme_obj.items = sauver_items
+    
     index = equipe.index(attaquant)
     print(f"> {attaquant.nom} se transforme en {forme_obj.nom} !")
     equipe[index] = forme_obj
+    
     return 0
 
 def prendre_focus(attaquant, cible, tours=1):

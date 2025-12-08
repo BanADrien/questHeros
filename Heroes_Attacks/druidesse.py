@@ -1,4 +1,4 @@
-from effects import transformation, poison, buff_stat, stun, effet_soin, creer_item, brulure, ressuciter_avec_choix, effet_regen, saignement, prendre_focus
+from effects import transformation, poison, buff_stat, stun, effet_soin, creer_item, brulure, ressuciter_avec_choix, effet_regen, saignement, prendre_focus, buff_stat_definitif
 from db_init import get_db
 from utils import choix_perso
 import random
@@ -6,8 +6,7 @@ def methamorphose(attaquant, cible, equipe):
     # faire choisir une forme
     db = get_db()
     attaquant.stack += 1
-    sauver_stack = attaquant.stack
-    sauver_vie = attaquant.pv
+
     print(f"> la druidesse gagne 1 stack de transformation (total : {attaquant.stack})")
     if attaquant.stack < 5:
         formes_druidesse = ["Arraignée géante", "Tortue blindée", "Singe savant"]
@@ -32,8 +31,6 @@ def methamorphose(attaquant, cible, equipe):
         if 1 <= choix_int <= len(formes_dispo):
             forme_choisie = formes_dispo[choix_int - 1]["nom"]
             transformation(attaquant, forme_choisie, equipe)
-            attaquant.stack = sauver_stack
-            attaquant.pv = min(attaquant.pv_max, sauver_vie)
         else:
             print("Choix invalide.")
     except ValueError:
@@ -43,7 +40,7 @@ def methamorphose(attaquant, cible, equipe):
 # arraigée géante
 
 def dard_venimeux(attaquant, cible, equipe):
-    degats = int(attaquant.atk * 0.0)
+    degats = int(attaquant.atk * 0.80)
     reels = cible.prendre_degats(degats)
     poison(cible, 3)
     return reels
@@ -76,7 +73,7 @@ def cours_particulier(attaquant, cible, equipe):
     equipe_sans_attaquant = [membre for membre in equipe if membre != attaquant]
     membre_aleatoire = random.choice(equipe_sans_attaquant)
     montant_boost = 5
-    buff_stat(membre_aleatoire, stat_aleatoire, montant_boost, tours=9999)
+    buff_stat_definitif(membre_aleatoire, stat_aleatoire, montant_boost)
     
     return 0
 
@@ -117,7 +114,7 @@ def feu_resurecteur(attaquant, cible, equipe):
 def dechiquetage(attaquant, cible, equipe):
     degats = int(attaquant.atk * 1.50)
     reels = cible.prendre_degats(degats)
-    saignement(cible, 5, reels)
+    saignement(cible, reels, 5)
     return reels
     
 def hurlement(attaquant, cible, equipe):

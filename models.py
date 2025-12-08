@@ -101,9 +101,10 @@ class Combattant:
                 print(f"> {self.nom} régénère {-total} PV ! (PV : {self.pv}/{self.pv_max})")
             elif stat == "stun":
                 self.peut_attaquer = False
+                print(f"> {self.nom} est étourdi et ne peut pas attaquer ce tour !")
             elif stat == "prendre_focus":
                 self.est_cible = True
-                print(f"> {self.nom} est étourdi et ne peut pas attaquer ce tour !")
+                
             # décrémenter 1 seul effet (le premier) et supprimer les autres
             objets[0]["tours_restants"] -= 1
             if objets[0]["tours_restants"] <= 0:
@@ -129,16 +130,17 @@ class Combattant:
         self.items.append(item)
         
         # Appliquer les bonus de stats permanents
-        for stat, val in item.stats_bonus.items():
-            if stat == "pv_max":
-                self.pv_max += val
-                self.pv += val
-            elif stat == "atk":
-                self.atk += val
-            elif stat == "defense":
-                self.defense += val
-            else:
-                setattr(self, stat, getattr(self, stat) + val)
+        if item.stats_bonus:
+            for stat, val in item.stats_bonus.items():
+                if stat == "pv_max":
+                    self.pv_max += val
+                    self.pv += val
+                elif stat == "atk":
+                    self.atk += val
+                elif stat == "defense":
+                    self.defense += val
+                else:
+                    setattr(self, stat, getattr(self, stat) + val)
         
         print(f" {self.nom} équipe {item.nom} !")
         if item.stats_bonus:

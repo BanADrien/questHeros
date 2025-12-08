@@ -2,7 +2,7 @@ import random
 import os
 from datetime import datetime
 from models import Combattant
-from items import obtenir_item
+from items import obtenir_item, test_item_giver
 from hero_turn import tour_hero
 from db_init import get_db
 from utils import (
@@ -49,6 +49,7 @@ class Partie:
         print("\nVotre équipe est prête!")
         for hero in self.equipe:
             print(f"  - {hero.nom}")
+        
     
     def charger_monstres(self):
         monstres_data = list(db.monstres.find())
@@ -195,6 +196,8 @@ class Partie:
         self.choisir_equipe()
         self.charger_items()
         self.charger_monstres()
+        test_item_giver(self.equipe)
+        
         
         print(f"\nVous allez affronter {len(self.monstres)} monstres!")
         

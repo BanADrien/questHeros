@@ -2,11 +2,11 @@ from effects import saignement, poison
 def incision (attaquant, cible, equipe):
     degats = int(attaquant.atk * 0.50)
     reels = cible.prendre_degats(degats)
-    saignement(cible, 3, reels)  
+    saignement(cible, reels, 3)  
     return reels
 
 def lame_toxique (attaquant, cible, equipe):
-    degats = int(attaquant.atk * 0.80)
+    degats = int(attaquant.atk * 0.60)
     reels = cible.prendre_degats(degats)
     poison(cible, 3) 
     

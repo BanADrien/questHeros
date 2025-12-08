@@ -138,7 +138,7 @@ def init_db():
                 "base": {
                     "nom": "extraction de sang",
                     "cooldown": 0,
-                    "description": "inflige 50% de l'attaque et soigne de 50% des dégats infligés et stock les pv volés en stack de sang",
+                    "description": "inflige 50% de l'attaque et soigne de 30% des dégats infligés et stock les pv volés en stack de sang",
                     "fonction": "extraction_de_sang"
                 },
                 "special": {
@@ -150,7 +150,7 @@ def init_db():
                 "ultime": {
                     "nom": "siphonage total",
                     "cooldown": 4,
-                    "description": "inflige des dégats fixes de 200% des degats et recupère 100% des dégats infligés en pv",
+                    "description": "inflige des dégats fixes de 200% des degats et recupère 30% des dégats infligés en pv",
                     "fonction": "siphonage_total"
                 }
             }
@@ -173,7 +173,7 @@ def init_db():
                 "special": {
                     "nom": "lame toxique",
                     "cooldown": 1,
-                    "description": "inflige 40% de l'attaque et empoisonne pour 3 tours",
+                    "description": "inflige 60% de l'attaque et empoisonne pour 3 tours",
                     "fonction": "lame_toxique"
                 },
                 "ultime": {
@@ -402,7 +402,7 @@ def init_db():
             "stack": 0,
             "attaques": {
                 "base": {
-                    "nom": "Cours particuliers",
+                    "nom": "Cours particulier",
                     "cooldown": 0,
                     "description": "donne 5 point d'une stat aléatoire à un allié",
                     "fonction": "cours_particuliers"
@@ -545,8 +545,13 @@ def init_db():
             {
                 "nom": "Potion de soin mineure",
                 "description": "Restaure quelques PV",
-                "stats_bonus": {"pv": 5},
-                "effet": None,
+                "stats_bonus": None,
+                "effet": {
+                    "event": "start_turn",
+                    "fonction": "item_regen",
+                    "montant": 1,
+                    "tours": 1
+                },
                 "rarete": "commun"
             }
         ],
@@ -572,7 +577,18 @@ def init_db():
                 "stats_bonus": {"atk": 6},
                 "effet": None,
                 "rarete": "peu_commun"
-            }
+            },
+             {
+                "nom": "Pierre à aiguiser",
+                "description": "l'attaque de base applique désormais saignement pour 1 tour",
+                "stats_bonus": {"atk": 3},
+                "effet": {
+                    "event": "deal_damage",
+                    "fonction": "item_saignement",
+                    "tours": 1
+                },
+                "rarete": "peu_commun"
+            },
         ],
         
         "rare": [
@@ -581,8 +597,10 @@ def init_db():
                 "description": "Régénère 2 PV par tour",
                 "stats_bonus": {"defense": 1, "pv_max": 5},
                 "effet": {
-                    "fonction": "effet_regen",
-                    "montant": 2
+                    "event": "start_turn",
+                    "fonction": "item_regen",
+                    "montant": 3,
+                    "tours": 1
                 },
                 "rarete": "rare"
             },
@@ -591,17 +609,22 @@ def init_db():
                 "description": "Une épée qui brûle les ennemis",
                 "stats_bonus": {"atk": 5},
                 "effet": {
-                    "fonction": "brulure",
-                    "tours": 3
+                    "event": "deal_damage",
+                    "fonction": "item_brulure",
+                    "tours": 2
                 },
                 "rarete": "rare"
             },
             {
                 "nom": "Bouclier du gardien",
-                "description": "Réduit les dégâts reçus",
+                "description": "Le porteur devient la cible de toutes les attaques",
                 "stats_bonus": {"defense": 8, "pv_max": 15},
-                "effet": None,
+                "effet": {
+                    "event": "obtention_item",
+                    "fonction": "item_prendre_focus",
+                },
                 "rarete": "rare"
+                
             }
         ],
         
@@ -609,27 +632,39 @@ def init_db():
             {
                 "nom": "Amulette du vampire",
                 "description": "Vole de la vie à chaque tour",
-                "stats_bonus": {"atk": 4, "pv_max": 10},
+                "stats_bonus": {"atk": 10, "pv_max": 10},
                 "effet": {
-                    "fonction": "effet_regen",
-                    "montant": 5
+                    "event": "deal_damage",
+                    "fonction": "item_vol_de_vie",
+                    "tours": None
                 },
                 "rarete": "legendaire"
             },
             {
                 "nom": "Couronne du titan",
-                "description": "Augmente considérablement toutes les stats",
-                "stats_bonus": {"atk": 7, "defense": 7, "pv_max": 20},
+                "description": "Augmente considérablement les stats défensives",
+                "stats_bonus": {"defense": 30, "pv_max": 20},
                 "effet": None,
                 "rarete": "legendaire"
             },
             {
                 "nom": "Lame de l'infini",
                 "description": "Une arme légendaire d'une puissance inouïe",
-                "stats_bonus": {"atk": 10, "defense": 3},
+                "stats_bonus": {"atk": 30, "defense": 5, "pv_max": 10},
                 "effet": None,
                 "rarete": "legendaire"
-            }
+            },
+            {
+                "nom": "Cape du héro",
+                "description": "Transforme le porteur en héros",
+                "stats_bonus": None,
+                "effet": {
+                    "event": "obtention_item",
+                    "fonction": "item_transformation_hero",
+                },
+                "rarete": "legendaire"
+            },
+            
         ]
     }
 
@@ -652,4 +687,4 @@ def init_db():
 
     db.items.insert_many(liste_items)
 
-    print(" BDD initialisée")
+    print("BDD initialisée")

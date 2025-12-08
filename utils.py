@@ -52,7 +52,6 @@ def afficher_details_attaque(hero):
         print(f"\n3. {ultimate['nom']} (cooldown : {hero.cooldowns['ultime']} tours)")
     print(f"   Description : {ultimate['description']}")
 def afficher_etat_combat(monstre, equipe):
-    os.system('cls' if os.name == 'nt' else 'clear')
     print("\n" + "="*50)
     print(f"COMBAT CONTRE {monstre.nom.upper()}")
     print("="*50)
