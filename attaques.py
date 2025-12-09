@@ -3,8 +3,8 @@
 import random
 from effects import effet_soin, buff_stat, brulure, effet_vol_de_vie, saignement, poison, effet_regen, resurrection
 from db_init import get_db
+import events
 from models import Combattant
-from items import verifier_effet_items
 
 
 
@@ -23,7 +23,8 @@ def executer_attaque(attaquant, cible, equipe, type_attaque, attaque_info):
     # exécuter l’attaque
     
     degats_total = fonction_attaque(attaquant, cible, equipe)
-    verifier_effet_items(attaquant, cible, equipe, degats_total, type_attaque)
+    events.trigger("deal_damage", attaquant, cible, degats_total, type_attaque, equipe)
+
     if degats_total > 0:
         print(f"> {degats_total} dégâts infligés à {cible.nom} !")
 

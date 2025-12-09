@@ -1,5 +1,5 @@
 # models.py
-
+import events
 class Combattant:
     def __init__(self, data, est_heros=True):
         self.nom = data["nom"]
@@ -31,11 +31,12 @@ class Combattant:
         reduction = self.defense / (self.defense + 100)
         degats_reels = max(1, int(degats * (1 - reduction)))
         self.pv = max(0, self.pv - degats_reels)
+        events.trigger("deal_damage_taken", self, degats_reels)
         return degats_reels
     
     def prendre_degats_directs(self, degats):
-        """Dégâts directs sans réduction. Peut être négatif pour soigner"""
         self.pv = max(0, min(self.pv_max, self.pv - degats))
+        events.trigger("take_damage", self, abs(degats))
         return abs(degats)
     
     def reduire_cooldowns(self):
@@ -170,3 +171,4 @@ class Item:
         self.stats_bonus = data.get("stats_bonus", {})
         self.effet = data.get("effet", None)
         self.rarete = data.get("rarete", "commun")
+        self.event = data.get("event", None)

@@ -115,7 +115,6 @@ def brulure(cible, tours):
         "montant": montant,
         "tours_restants": tours
     })
-    print(tours)
     print(f" {cible.nom} est brûlé et subira {montant} dégâts pendant {tours} tours.")
 
 

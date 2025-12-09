@@ -3,6 +3,8 @@ import os
 from datetime import datetime
 from models import Combattant
 from items import obtenir_item, test_item_giver
+from event_effect import verifier_effet_items
+import events
 from hero_turn import tour_hero
 from db_init import get_db
 from utils import (
@@ -156,7 +158,7 @@ class Partie:
     def combattre_monstre(self, monstre):
 
         afficher_intro_combat(monstre)
-
+        verifier_effet_items(self.equipe)
         while monstre.est_vivant() and any(h.est_vivant() for h in self.equipe):
             self.tour += 1
             afficher_tour(self.tour)
@@ -196,7 +198,8 @@ class Partie:
         self.choisir_equipe()
         self.charger_items()
         self.charger_monstres()
-        test_item_giver(self.equipe)
+        # test_item_giver(self.equipe, "Pierre à aiguiser")
+        test_item_giver(self.equipe, "Amulette du vampire")
         
         
         print(f"\nVous allez affronter {len(self.monstres)} monstres!")

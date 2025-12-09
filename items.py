@@ -1,6 +1,6 @@
 import random
 from models import Item
-
+import events
 
 def choisir_rarete(raretes):
     rand = random.randint(1, 100)
@@ -56,41 +56,15 @@ def obtenir_item(equipe, raretes, items_par_rarete):
     
     return None
 
-def verifier_effet_items(attaquant, cible, equipe, montant=None, attaque_type=None):
-    import item_effects
-    items = attaquant.items
-
-    for item in items:
-        if not item.effet:
-            continue  # saute l'item si effet est None
-
-        # maintenant on sait que item.effet existe
-        if "montant" in item.effet:
-            montant = item.effet["montant"]
-
-        if "fonction" not in item.effet:
-            continue
-
-        fonction_nom = item.effet["fonction"]
-        fonction = getattr(item_effects, fonction_nom, None)
-
-        if fonction is None:
-            continue
-
-        tours = item.effet.get("tours", 1)
-
-        fonction(attaquant, cible, equipe, montant, tours, attaque_type)
-
-    return
-
-
     
-def test_item_giver(equipe):
+def test_item_giver(equipe, nom_item):
     # donner l'item "Lame enflammée" au premier héros de equipe
     from db_init import get_db
     db = get_db()
-    item_data = db.items.find_one({"nom": "Pierre à aiguiser"}, {"_id": 0})
+    item_data = db.items.find_one({"nom": nom_item}, {"_id": 0}) 
     if item_data:
         item = Item(item_data)
-        equipe[0].equiper_item(item)
         print(f"\n{equipe[0].nom} a reçu l'item spécial : {item.nom} !")
+        equipe[0].equiper_item(item)
+        
+    
