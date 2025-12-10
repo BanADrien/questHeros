@@ -138,7 +138,7 @@ def init_db():
                 "base": {
                     "nom": "extraction de sang",
                     "cooldown": 0,
-                    "description": "inflige 50% de l'attaque et soigne de 30% des dégats infligés et stock les pv volés en stack de sang",
+                    "description": "inflige 60% de l'attaque et soigne de 30% des dégats infligés et stock les pv volés en stack de sang",
                     "fonction": "extraction_de_sang"
                 },
                 "special": {
@@ -216,7 +216,7 @@ def init_db():
         {
             "nom": "Villagois",
             "description": "Un simple villageois voulant protéger son village mais on lui remarque un certain potentiel.",
-            "type_perso": "support",
+            "type_perso": "support/??",
             "atk": 10,
             "def": 3,
             "pv_max": 65,
@@ -405,7 +405,7 @@ def init_db():
                     "nom": "Cours particulier",
                     "cooldown": 0,
                     "description": "donne 5 point d'une stat aléatoire à un allié",
-                    "fonction": "cours_particuliers"
+                    "fonction": "cours_particulier"
                 },
                 "special": {
                     "nom": "invention",
@@ -518,9 +518,9 @@ def init_db():
         {"nom": "Troll", "atk": 25, "def": 10, "pv_max": 150, "status": [], "peut_attaquer": True},
         {"nom": "Golem", "atk": 20, "def": 40, "pv_max": 160, "status": [], "peut_attaquer": True},
         {"nom": "Dragon", "atk": 35, "def": 20, "pv_max": 300, "status": [], "peut_attaquer": True},
-        {"nom": "Demon", "atk": 60, "def": 30, "pv_max": 200, "status": [], "peut_attaquer": True},
-        {"nom": "Ange", "atk": 80, "def": 40, "pv_max": 400, "status": [], "peut_attaquer": True},
-        {"nom": "La Mort", "atk": 200, "def": 0, "pv_max": 300, "status": [], "peut_attaquer": True},
+        {"nom": "Demon", "atk": 50, "def": 30, "pv_max": 200, "status": [], "peut_attaquer": True},
+        {"nom": "Ange", "atk": 60, "def": 40, "pv_max": 400, "status": [], "peut_attaquer": True},
+        {"nom": "La Mort", "atk": 120, "def": 0, "pv_max": 300, "status": [], "peut_attaquer": True},
         
         
     ]

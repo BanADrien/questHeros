@@ -2,6 +2,9 @@
 import events
 class Combattant:
     def __init__(self, data, est_heros=True):
+        # Conserver les données sources pour pouvoir réinjecter le perso dans la liste
+        # (utile pour la désélection dans l'écran de choix)
+        self._raw_data = data
         self.nom = data["nom"]
         self.atk = data["atk"]
         self.defense = data["def"]
@@ -147,6 +150,9 @@ class Combattant:
         if item.stats_bonus:
             bonus_str = ", ".join([f"+{v} {k}" for k, v in item.stats_bonus.items()])
             print(f"   Bonus : {bonus_str}")
+        
+        # Trigger l'événement d'obtention d'item pour les effets d'items
+        events.trigger("obtention_item", self, item)
     
     def appliquer_effets_items(self):
         

@@ -7,31 +7,50 @@ import events
 from models import Combattant
 
 
-
 def executer_attaque(attaquant, cible, equipe, type_attaque, attaque_info):
-
     nom_fonction = attaque_info.get("fonction")
     module = __import__(__name__)
 
     if not hasattr(module, nom_fonction):
-        raise ValueError(f"La fonction d’attaque '{nom_fonction}' n’existe pas dans attaques.py")
+        raise ValueError(f"La fonction d'attaque '{nom_fonction}' n'existe pas dans attaques.py")
 
     fonction_attaque = getattr(module, nom_fonction)
-
-    print(f"\n{attaquant.nom} utilise {attaque_info.get('nom','attaque inconnue')} !")
-
-    # exécuter l’attaque
     
-    degats_total = fonction_attaque(attaquant, cible, equipe)
-    events.trigger("deal_damage", attaquant, cible, degats_total, type_attaque, equipe)
-
+    # Exécuter l'attaque
+    resultat = fonction_attaque(attaquant, cible, equipe)
+    
+    # Gérer les deux formats de retour
+    if isinstance(resultat, dict):
+        # Nouveau format : {"degats": X, "messages": [...], autres_flags...}
+        degats_total = resultat.get("degats", 0)
+        messages_effets = resultat.get("messages", [])
+        
+        # CORRECTION : Vérifier si c'est une métamorphose
+        if resultat.get("selection_forme"):
+            # Retourner directement le résultat sans le modifier
+            # pour préserver les flags spéciaux
+            return resultat
+    else:
+        # Ancien format : juste un nombre (dégâts)
+        degats_total = resultat
+        messages_effets = []
+    
+    # Trigger l'event (important pour les effets)
     if degats_total > 0:
-        print(f"> {degats_total} dégâts infligés à {cible.nom} !")
+        events.trigger("deal_damage", attaquant, cible, degats_total, type_attaque, equipe)
+    
+    retour = {
+        "degats": degats_total,
+        "messages": messages_effets
+    }
 
-    if not cible.est_vivant():
-        print(f"{cible.nom} est mort !")
-    return degats_total
+    # Propager d'éventuels flags/valeurs additionnelles remontés par l'attaque
+    if isinstance(resultat, dict):
+        for cle, valeur in resultat.items():
+            if cle not in retour:
+                retour[cle] = valeur
 
+    return retour
 
 
 #==================== spells pour chaque personnages ========================
@@ -70,16 +89,6 @@ from Heroes_Attacks.villagois import coup_de_fourche, encouragement, transformat
 from Heroes_Attacks.druidesse import methamorphose, dard_venimeux, paralysie, cours_particulier, invention, auto_guerison, carapace_partagee, frappe_sismique, inflexible, dechiquetage, hurlement, feu_resurecteur, feu_sacre
 
 
-
-
-
-
-
-
-
-
-
-
 def obtenir_attaques_disponibles(hero):
     return [
         ("base", hero.attaques["base"]),
@@ -88,10 +97,8 @@ def obtenir_attaques_disponibles(hero):
     ]
 
 
-
 def gerer_cooldown_attaque(hero, type_attaque, attaque_info):
     cooldown = attaque_info.get("cooldown", 0)
 
     if cooldown > 0:
         hero.cooldowns[type_attaque] = cooldown + 1
-

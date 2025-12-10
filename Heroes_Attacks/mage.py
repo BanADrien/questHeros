@@ -7,19 +7,19 @@ def arcane_simple(attaquant, cible, equipe):
     reduction = int(attaquant.atk * 0.10)
     cible.defense = max(0, cible.defense - reduction)
 
-    print(f"> Défense de {cible.nom} réduite de {reduction} (nouvelle DEF : {cible.defense})")
     attaquant.atk += 1
-    return reels
+    messages = [f"Défense de {cible.nom} réduite de {reduction} (nouvelle DEF : {cible.defense})"]
+    return {"degats": reels, "messages": messages}
 
 
 def fire_ball(attaquant, cible, equipe):
     degats = int(attaquant.atk * 0.70)
     reels = cible.prendre_degats(degats)
 
-    brulure(cible, 3)
-    
+    _, msg_brulure = brulure(cible, 3)
     attaquant.atk += 1
-    return reels
+    messages = [msg_brulure]
+    return {"degats": reels, "messages": messages}
 
 
 def mal_phenomenal(attaquant, cible, equipe):
@@ -30,4 +30,5 @@ def mal_phenomenal(attaquant, cible, equipe):
 
     reels = cible.prendre_degats(degats)
     attaquant.atk += 1
-    return reels
+    messages = [f"Le mage utilise un mal phénoménal pour {reels} dégâts !"]
+    return {"degats": reels, "messages": messages}

@@ -4,6 +4,7 @@
 _events = {
     "deal_damage": [],
     "take_damage": [],
+    "deal_damage_taken": [],
     "obtention_item": [],
     "start_turn": [],
     "end_turn": []
