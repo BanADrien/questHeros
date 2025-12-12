@@ -1,13 +1,26 @@
 import pygame
 from items import obtenir_item, equiper_item_a_hero
+from pixel_style import pixel_style
 
 class SelectionItem:
     def __init__(self, game, item_override=None, retour_combat=False):
         self.game = game
-        self.font_title = pygame.font.Font(None, 60)
-        self.font_text = pygame.font.Font(None, 30)
-        self.font_small = pygame.font.Font(None, 24)
+        self.style = pixel_style
+        self.font_title = self.style.font_title
+        self.font_text = self.style.font_text
+        self.font_small = self.style.font_small
         self.retour_combat = retour_combat
+        
+        # Charger l'image de fond
+        self.background = None
+        try:
+            import os
+            item_path = "assets/item.png"
+            if os.path.exists(item_path):
+                self.background = pygame.image.load(item_path)
+                self.background = pygame.transform.scale(self.background, (game.WIDTH, game.HEIGHT))
+        except Exception as e:
+            print(f"Erreur chargement item.png: {e}")
         
         # Générer ou utiliser l'item fourni
         self.item = item_override or obtenir_item(
@@ -98,6 +111,18 @@ class SelectionItem:
                     self.continuer_combat()
     
     def draw(self, screen):
+        # Fond d'écran
+        if self.background:
+            screen.blit(self.background, (0, 0))
+        else:
+            screen.fill((0, 0, 0))
+        
+        # Overlay semi-transparent
+        overlay = pygame.Surface((self.game.WIDTH, self.game.HEIGHT))
+        overlay.set_alpha(180)
+        overlay.fill((0, 0, 0))
+        screen.blit(overlay, (0, 0))
+        
         # Titre
         if self.item:
             title = self.font_title.render("Item obtenu !", True, (255, 255, 100))

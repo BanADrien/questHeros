@@ -17,12 +17,18 @@ def choisir_rarete(raretes):
 def generer_loot(raretes, items_par_rarete):
     rarete = choisir_rarete(raretes)
     items_disponibles = items_par_rarete.get(rarete, [])
-    
+
+    # Fallback: si aucune entrée pour la rareté tirée, choisir parmi tous les items disponibles
     if not items_disponibles:
-        return None
-    
+        tous_les_items = []
+        for lst in items_par_rarete.values():
+            tous_les_items.extend(lst)
+        if not tous_les_items:
+            return None
+        item_data = random.choice(tous_les_items)
+        return Item(item_data)
+
     item_data = random.choice(items_disponibles)
-    
     return Item(item_data)
 
 

@@ -1,13 +1,43 @@
 import pygame
 from attaques import obtenir_attaques_disponibles, gerer_cooldown_attaque
+from pixel_style import pixel_style
 
 class Combat:
     def __init__(self, game):
         self.game = game
-        self.font_title = pygame.font.Font(None, 50)
-        self.font_text = pygame.font.Font(None, 30)
-        self.font_small = pygame.font.Font(None, 24)
-        self.font_tiny = pygame.font.Font(None, 20)
+        self.style = pixel_style
+        self.font_title = self.style.font_title
+        self.font_text = self.style.font_text
+        self.font_small = self.style.font_small
+        self.font_tiny = self.style.font_tiny
+        
+        # Charger l'image du lieu et le sprite du monstre
+        self.background = None
+        self.monstre_sprite = None
+        import os
+        
+        monstre = game.obtenir_monstre_actuel()
+        if monstre:
+            # Charger l'image du lieu
+            lieu = getattr(monstre, "lieu", "prairie")
+            try:
+                lieu_path = os.path.join("assets", "lieux", f"{lieu}.png")
+                if os.path.exists(lieu_path):
+                    self.background = pygame.image.load(lieu_path)
+                    self.background = pygame.transform.scale(self.background, (game.WIDTH, game.HEIGHT))
+            except Exception as e:
+                print(f"Erreur chargement lieu {lieu}: {e}")
+            
+            # Charger le sprite du monstre
+            monstre_nom = monstre.nom.lower()
+            try:
+                sprite_path = os.path.join("assets", "monstres", f"{monstre_nom}.png")
+                if os.path.exists(sprite_path):
+                    self.monstre_sprite = pygame.image.load(sprite_path)
+                    # Redimensionner pour qu'il soit visible et cohérent avec l'intro (300x300)
+                    self.monstre_sprite = pygame.transform.scale(self.monstre_sprite, (300, 300))
+            except Exception as e:
+                print(f"Erreur chargement sprite monstre {monstre_nom}: {e}")
         
         # État du combat
         self.hero_actuel_index = 0
@@ -90,18 +120,28 @@ class Combat:
         for hero in self.game.equipe:
             hero.reduire_cooldowns()
         
+        # Incrémenter le numéro de tour (combat courant) et le cumul global
+        self.game.tour += 1
+        if hasattr(self.game, "tours_cumule"):
+            self.game.tours_cumule += 1
         self.hero_actuel_index = 0
         self.en_attente_action = True
         self.creer_boutons_attaques()
     
     def update(self):
-        # Décompter le timer des messages
-        if self.message_timer > 0:
-            self.message_timer -= 1
-            if self.message_timer == 0:
-                self.messages = []
+        # Les messages restent jusqu'à ce qu'on clique dessus
+        pass
     
     def handle_events(self, event_list):
+        for event in event_list:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # Clic sur les messages pour les fermer
+                if self.messages:
+                    message_rect = pygame.Rect(self.game.WIDTH // 2 - 300, 350, 600, 100)
+                    if message_rect.collidepoint(event.pos):
+                        self.messages = []
+                        return
+        
         if not self.en_attente_action:
             return
         
@@ -195,6 +235,45 @@ class Combat:
         self.passer_au_hero_suivant()
     
     def draw(self, screen):
+        # Fond du lieu
+        if self.background:
+            screen.blit(self.background, (0, 0))
+        else:
+            screen.fill((30, 30, 60))
+        
+        # Overlay semi-transparent pour améliorer la lisibilité
+        overlay = pygame.Surface((self.game.WIDTH, self.game.HEIGHT))
+        overlay.set_alpha(160)
+        overlay.fill((0, 0, 0))
+        screen.blit(overlay, (0, 0))
+        
+        # Afficher le sprite du monstre en arrière-plan (côté droit) avec filtre rouge uniquement sur la silhouette
+        if self.monstre_sprite:
+            sprite_x = self.game.WIDTH - 300
+            sprite_y = 150
+            monstre = self.game.obtenir_monstre_actuel()
+            if monstre and monstre.pv < monstre.pv_max:
+                ratio = 1.0 - (monstre.pv / monstre.pv_max)
+                sprite = self.monstre_sprite.copy()
+                try:
+                    # Accès direct aux pixels (Surface -> array)
+                    import numpy as np
+                    arr = pygame.surfarray.pixels_alpha(sprite)
+                    mask = arr > 0
+                    red_overlay = pygame.surfarray.pixels3d(sprite)
+                    # Appliquer le rouge uniquement sur les pixels opaques
+                    red_intensity = int(40 + 140 * ratio)
+                    red_overlay[...,0][mask] = np.minimum(255, red_overlay[...,0][mask] + red_intensity)
+                    # Libérer le lock
+                    del arr
+                    del red_overlay
+                except Exception:
+                    # Fallback : pas de filtre si numpy absent ou erreur
+                    pass
+                screen.blit(sprite, (sprite_x, sprite_y))
+            else:
+                screen.blit(self.monstre_sprite, (sprite_x, sprite_y))
+        
         # Titre
         title = self.font_title.render(f"Combat - Tour {self.game.tour}", True, (255, 255, 255))
         screen.blit(title, (self.game.WIDTH // 2 - title.get_width() // 2, 20))
@@ -205,17 +284,21 @@ class Combat:
         # Afficher le monstre (au centre)
         self.afficher_monstre(screen)
         
-        # Afficher le héros actuel
+        # Afficher le héros actuel et ses stacks (zone centrale, juste au-dessus des attaques)
         if self.hero_actuel_index < len(self.game.equipe):
             hero = self.game.equipe[self.hero_actuel_index]
-            # si le hero a des stacks, les afficher
-            
             if hero.est_vivant():
+                # Centrer le nom du héros actif
                 hero_text = self.font_text.render(f"C'est au tour de : {hero.nom}", True, (255, 255, 100))
-                screen.blit(hero_text, (50, 480))
-            if hasattr(hero, 'stack') and hero.stack > 0:
-                stack_text = self.font_small.render(f"Stacks: {hero.stack}", True, (255, 255, 100))
-                screen.blit(stack_text, (50, 520))
+                hero_text_rect = hero_text.get_rect()
+                hero_text_rect.topleft = (50, 480)
+                screen.blit(hero_text, hero_text_rect)
+                # Afficher les stacks juste en dessous, centré comme le nom
+                if hasattr(hero, 'stack') and hero.stack > 0:
+                    stack_text = self.font_small.render(f"Stacks: {hero.stack}", True, (255, 200, 100))
+                    stack_text_rect = stack_text.get_rect()
+                    stack_text_rect.topleft = (50, 520)
+                    screen.blit(stack_text, stack_text_rect)
         
         # Dessiner les boutons d'attaque avec description
         mouse_pos = pygame.mouse.get_pos()
@@ -268,12 +351,10 @@ class Combat:
                 dmg_text = self.font_small.render("Prêt", True, (200, 200, 200))
                 screen.blit(dmg_text, (btn["rect"].x + 12, btn["rect"].y + 90))
         
-        # Bouton passer le tour
-        passer_color = (120, 80, 80) if self.btn_passer.collidepoint(mouse_pos) else (90, 60, 60)
-        pygame.draw.rect(screen, passer_color, self.btn_passer)
-        pygame.draw.rect(screen, (200, 150, 150), self.btn_passer, 2)
-        passer_txt = self.font_text.render("Passer", True, (255, 230, 230))
-        screen.blit(passer_txt, (self.btn_passer.centerx - passer_txt.get_width() // 2, self.btn_passer.centery - passer_txt.get_height() // 2))
+        # Bouton passer le tour avec style pixel art
+        self.style.draw_button(screen, self.btn_passer, "Passer", self.font_text,
+                              self.btn_passer.collidepoint(mouse_pos),
+                              (90, 60, 60))
 
        
         # Afficher les messages
@@ -301,6 +382,10 @@ class Combat:
             nom_text = self.font_small.render(f"{hero.nom}", True, color)
             screen.blit(nom_text, (x, y))
             y += 22
+            # Afficher les stacks sous le nom du héros (dans la liste à gauche)
+            if hasattr(hero, 'stack') and hero.stack > 0:
+                stack_text = self.font_small.render(f"Stacks: {hero.stack}", True, (255, 200, 100))
+                screen.blit(stack_text, (x + 100, y - 22))
             
             # Stats (ATK / DEF)
             stats_text = self.font_small.render(f"ATK: {hero.atk} | DEF: {hero.defense}", True, (180, 180, 180))
@@ -487,3 +572,8 @@ class Combat:
             text = self.font_small.render(msg, True, (255, 255, 255))
             screen.blit(text, (x + 10, y))
             y += 28
+        
+        # Indication pour fermer
+        if self.messages:
+            hint = self.font_tiny.render("(Cliquez pour fermer)", True, (150, 150, 150))
+            screen.blit(hint, (x + 600 - hint.get_width() - 10, 350 + 100 - 20))

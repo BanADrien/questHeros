@@ -511,16 +511,16 @@ def init_db():
     ]
         
     monstres = [
-        {"nom": "Gobelin", "atk": 10, "def": 5, "pv_max": 50, "status": [], "peut_attaquer": True},
-        {"nom": "Squelette", "atk": 15, "def": 4, "pv_max": 70, "status": [], "peut_attaquer": True},
-        {"nom": "Loup féroce", "atk": 15, "def": 6, "pv_max": 70, "status": [], "peut_attaquer": True},
-        {"nom": "Orc", "atk": 20, "def": 8, "pv_max": 120, "status": [], "peut_attaquer": True},
-        {"nom": "Troll", "atk": 25, "def": 10, "pv_max": 150, "status": [], "peut_attaquer": True},
-        {"nom": "Golem", "atk": 20, "def": 40, "pv_max": 160, "status": [], "peut_attaquer": True},
-        {"nom": "Dragon", "atk": 35, "def": 20, "pv_max": 300, "status": [], "peut_attaquer": True},
-        {"nom": "Demon", "atk": 50, "def": 30, "pv_max": 200, "status": [], "peut_attaquer": True},
-        {"nom": "Ange", "atk": 60, "def": 40, "pv_max": 400, "status": [], "peut_attaquer": True},
-        {"nom": "La Mort", "atk": 120, "def": 0, "pv_max": 300, "status": [], "peut_attaquer": True},
+        {"nom": "Gobelin", "atk": 10, "def": 5, "pv_max": 50, "status": [], "peut_attaquer": True, "lieu": "prairie", "article": "un", "message_intro": "Vous pénétrez dans une prairie verdoyante..."},
+        {"nom": "Squelette", "atk": 15, "def": 4, "pv_max": 70, "status": [], "peut_attaquer": True, "lieu": "cimetiere", "article": "un", "message_intro": "Un frisson parcourt votre échine en entrant dans ce cimetière..."},
+        {"nom": "Loup", "atk": 15, "def": 6, "pv_max": 70, "status": [], "peut_attaquer": True, "lieu": "foret", "article": "un", "message_intro": "Vous vous enfoncez dans une forêt sombre et menaçante..."},
+        {"nom": "Orc", "atk": 20, "def": 8, "pv_max": 120, "status": [], "peut_attaquer": True, "lieu": "montagne", "article": "un", "message_intro": "Les montagnes rocheuses s'élèvent devant vous..."},
+        {"nom": "Troll", "atk": 25, "def": 10, "pv_max": 150, "status": [], "peut_attaquer": True, "lieu": "montagne", "article": "un", "message_intro": "Vous pataugez dans un marais putride et inhospitalier..."},
+        {"nom": "Golem", "atk": 20, "def": 40, "pv_max": 160, "status": [], "peut_attaquer": True, "lieu": "montagne", "article": "un", "message_intro": "L'obscurité de la caverne vous enveloppe..."},
+        {"nom": "Dragon", "atk": 35, "def": 20, "pv_max": 300, "status": [], "peut_attaquer": True, "lieu": "volcan", "article": "un", "message_intro": "La chaleur intense du volcan vous assaille..."},
+        {"nom": "Demon", "atk": 50, "def": 30, "pv_max": 200, "status": [], "peut_attaquer": True, "lieu": "volcan", "article": "un", "message_intro": "Vous descendez dans les profondeurs infernales..."},
+        {"nom": "Ange", "atk": 60, "def": 40, "pv_max": 400, "status": [], "peut_attaquer": True, "lieu": "paradis", "article": "un", "message_intro": "Une lumière divine illumine votre chemin..."},
+        {"nom": "La Mort", "atk": 120, "def": 0, "pv_max": 300, "status": [], "peut_attaquer": True, "lieu": "neant", "article": "la", "message_intro": "Le néant vous entoure, la fin est proche..."},
         
         
     ]
@@ -530,21 +530,21 @@ def init_db():
         "commun": [
             {
                 "nom": "Épée rouillée",
-                "description": "Une vieille épée qui augmente légèrement l'attaque",
+                "description": "+3 attaque",
                 "stats_bonus": {"atk": 3},
                 "effet": None,
                 "rarete": "commun"
             },
             {
                 "nom": "Vieux bouclier",
-                "description": "Un bouclier usé mais fonctionnel",
+                "description": "+3 défense",
                 "stats_bonus": {"defense": 3},
                 "effet": None,
                 "rarete": "commun"
             },
             {
                 "nom": "Potion de soin mineure",
-                "description": "Restaure quelques PV",
+                "description": "regen 1 PV par tour",
                 "stats_bonus": None,
                 "effet": {
                     "event": "start_turn",
@@ -559,28 +559,28 @@ def init_db():
         "peu_commun": [
             {
                 "nom": "Armure de plates",
-                "description": "Une solide armure qui augmente la défense",
+                "description": "+5 défense, +10 PV max",
                 "stats_bonus": {"defense": 5, "pv_max": 10},
                 "effet": None,
                 "rarete": "peu_commun"
             },
             {
                 "nom": "Anneau de vitalité",
-                "description": "Augmente les points de vie maximums",
+                "description": "pv max +15, defense +2",
                 "stats_bonus": {"pv_max": 15, "defense": 2},
                 "effet": None,
                 "rarete": "peu_commun"
             },
             {
                 "nom": "Épée en acier",
-                "description": "Une épée de qualité correcte",
+                "description": "+6 attaque",
                 "stats_bonus": {"atk": 6},
                 "effet": None,
                 "rarete": "peu_commun"
             },
              {
                 "nom": "Pierre à aiguiser",
-                "description": "l'attaque de base applique désormais saignement pour 1 tour",
+                "description": "+3 attaques, l'attaque de base applique désormais saignement pour 1 tour",
                 "stats_bonus": {"atk": 3},
                 "effet": {
                     "event": "deal_damage",
@@ -594,7 +594,7 @@ def init_db():
         "rare": [
             {
                 "nom": "Anneau de régénération",
-                "description": "Régénère 2 PV par tour",
+                "description": "defense +1, pv max +5, Régénère 3 PV par tour",
                 "stats_bonus": {"defense": 1, "pv_max": 5},
                 "effet": {
                     "event": "start_turn",
@@ -606,7 +606,7 @@ def init_db():
             },
             {
                 "nom": "Lame enflammée",
-                "description": "Une épée qui brûle les ennemis",
+                "description": "+5 attaque, une épée qui brûle les ennemis",
                 "stats_bonus": {"atk": 5},
                 "effet": {
                     "event": "deal_damage",
@@ -617,7 +617,7 @@ def init_db():
             },
             {
                 "nom": "Bouclier du gardien",
-                "description": "Le porteur devient la cible de toutes les attaques",
+                "description": "+8 défense, +15 PV max, Le porteur devient la cible de toutes les attaques",
                 "stats_bonus": {"defense": 8, "pv_max": 15},
                 "effet": {
                     "event": "obtention_item",
@@ -631,7 +631,7 @@ def init_db():
         "legendaire": [
             {
                 "nom": "Amulette du vampire",
-                "description": "Vole de la vie à chaque tour",
+                "description": "+10 attaque, +10 PV max, Vole de la vie à chaque tour",
                 "stats_bonus": {"atk": 10, "pv_max": 10},
                 "effet": {
                     "event": "deal_damage",
@@ -642,14 +642,14 @@ def init_db():
             },
             {
                 "nom": "Couronne du titan",
-                "description": "Augmente considérablement les stats défensives",
+                "description": "+30 défense, +20 PV max",
                 "stats_bonus": {"defense": 30, "pv_max": 20},
                 "effet": None,
                 "rarete": "legendaire"
             },
             {
                 "nom": "Lame de l'infini",
-                "description": "Une arme légendaire d'une puissance inouïe",
+                "description": "+30 attaque, +5 défense, +10 PV max",
                 "stats_bonus": {"atk": 30, "defense": 5, "pv_max": 10},
                 "effet": None,
                 "rarete": "legendaire"
@@ -673,7 +673,6 @@ def init_db():
     db.perso_annexe.delete_many({})
     db.monstres.delete_many({})
     db.items.delete_many({})
-    db.scores.delete_many({})
     
 
     db.personnages.insert_many(personnages)
@@ -686,5 +685,20 @@ def init_db():
             liste_items.append(it)
 
     db.items.insert_many(liste_items)
+
+    # Charger les scores depuis un fichier JSON local si la collection est vide
+    try:
+        if db.scores.count_documents({}) == 0:
+            import json
+            import os
+            scores_file = "scores.json"
+            if os.path.exists(scores_file):
+                with open(scores_file, "r", encoding="utf-8") as f:
+                    scores_json = json.load(f)
+                if isinstance(scores_json, list) and scores_json:
+                    # Limiter à 10 et insérer
+                    db.scores.insert_many(scores_json[:10])
+    except Exception as e:
+        print(f"Import des scores JSON ignoré: {e}")
 
     print("BDD initialisée")

@@ -1,12 +1,14 @@
 import pygame
 from db_init import get_db
+from pixel_style import pixel_style
 
 class Scores:
     def __init__(self, game):
         self.game = game
-        self.font_title = pygame.font.Font(None, 70)
-        self.font_text = pygame.font.Font(None, 35)
-        self.font_small = pygame.font.Font(None, 28)
+        self.style = pixel_style
+        self.font_title = self.style.font_title
+        self.font_text = self.style.font_text
+        self.font_small = self.style.font_small
         
         # Charger les scores depuis la DB
         self.scores = self.charger_scores()

@@ -82,8 +82,11 @@ def verifier_effet_items(equipe_joueurs):
                         }
                     
                     # Appeler la fonction avec le joueur et l'event
-                    try:
-                        fonction(joueur, event)
+    try:
+                        message = fonction(joueur, event)
+                        # Si la fonction retourne un message, on le stocke pour l'afficher
+                        if message and hasattr(joueur, '_item_messages'):
+                            joueur._item_messages.append(message)
                     except Exception as e:
                         print(f"ERREUR en appelant {item_effet['fonction']}: {e}")
 

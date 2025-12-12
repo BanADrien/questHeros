@@ -1,11 +1,13 @@
 import pygame
+from pixel_style import pixel_style
 
 class Victoire:
     def __init__(self, game):
         self.game = game
-        self.font_title = pygame.font.Font(None, 80)
-        self.font_text = pygame.font.Font(None, 40)
-        self.font_small = pygame.font.Font(None, 30)
+        self.style = pixel_style
+        self.font_title = self.style.font_title
+        self.font_text = self.style.font_text
+        self.font_small = self.style.font_small
         
         # Sauvegarder le score
         self.game.sauvegarder_score(self.game.victoires)

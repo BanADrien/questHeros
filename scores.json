@@ -1,0 +1,74 @@
+[
+  {
+    "nom_joueur": "Tanki",
+    "date": "12/12/2025 16:47:12",
+    "equipe": [
+      "Hémomancien",
+      "Paladin",
+      "Chaman"
+    ],
+    "victoires": 9,
+    "total_monstres": 10,
+    "tours": 37
+  },
+  {
+    "nom_joueur": "AD",
+    "date": "12/12/2025 15:46:32",
+    "equipe": [
+      "Berserker",
+      "Paladin",
+      "Mage"
+    ],
+    "victoires": 2,
+    "total_monstres": 2,
+    "tours": 1
+  },
+  {
+    "nom_joueur": "AD",
+    "date": "12/12/2025 15:11:18",
+    "equipe": [
+      "Archer",
+      "Berserker",
+      "Paladin"
+    ],
+    "victoires": 2,
+    "total_monstres": 2,
+    "tours": 0
+  },
+  {
+    "nom_joueur": "Joueur",
+    "date": "12/12/2025 15:08:48",
+    "equipe": [
+      "Mage",
+      "Hémomancien",
+      "Assasin"
+    ],
+    "victoires": 2,
+    "total_monstres": 2,
+    "tours": 0
+  },
+  {
+    "nom_joueur": "Joueur",
+    "date": "12/12/2025 15:05:35",
+    "equipe": [
+      "Mage",
+      "Hémomancien",
+      "Assasin"
+    ],
+    "victoires": 2,
+    "total_monstres": 2,
+    "tours": 0
+  },
+  {
+    "nom_joueur": "Joueur",
+    "date": "12/12/2025 15:03:27",
+    "equipe": [
+      "Berserker",
+      "Paladin",
+      "Mage"
+    ],
+    "victoires": 2,
+    "total_monstres": 2,
+    "tours": 0
+  }
+]

@@ -1,10 +1,23 @@
 import pygame
+from pixel_style import pixel_style
 
 class Menu:
     def __init__(self, game):
         self.game = game
-        self.font_title = pygame.font.Font(None, 80)
-        self.font_button = pygame.font.Font(None, 50)
+        self.style = pixel_style
+        self.font_title = self.style.font_title
+        self.font_button = self.style.font_text
+        
+        # Charger l'image de fond
+        self.background = None
+        try:
+            import os
+            menu_path = "assets/menu.png"
+            if os.path.exists(menu_path):
+                self.background = pygame.image.load(menu_path)
+                self.background = pygame.transform.scale(self.background, (game.WIDTH, game.HEIGHT))
+        except Exception as e:
+            print(f"Erreur chargement menu.png: {e}")
         
         # Bouton Jouer
         self.btn_jouer = pygame.Rect(
@@ -37,49 +50,47 @@ class Menu:
         for event in event_list:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.btn_jouer.collidepoint(event.pos):
-                    # Lancer la sélection d'équipe
-                    from screens.selection_equipe import SelectionEquipe
-                    self.game.change_screen(SelectionEquipe)
-                    
+                    # Aller d'abord sur l'écran de choix de pseudo
+                    from screens.choix_pseudo import ChoixPseudo
+                    self.game.change_screen(ChoixPseudo)
                 elif self.btn_scores.collidepoint(event.pos):
-                    # Afficher les scores
                     from screens.scores import Scores
                     self.game.change_screen(Scores)
-                    
                 elif self.btn_quitter.collidepoint(event.pos):
                     self.game.running = False
     
     def draw(self, screen):
-        # Titre
-        title = self.font_title.render("MON RPG", True, (255, 255, 255))
+        # Fond d'écran
+        if self.background:
+            screen.blit(self.background, (0, 0))
+        else:
+            screen.fill((0, 0, 0))
+        
+        # Overlay semi-transparent pour améliorer la lisibilité
+        overlay = pygame.Surface((self.game.WIDTH, self.game.HEIGHT))
+        overlay.set_alpha(180)
+        overlay.fill((0, 0, 0))
+        screen.blit(overlay, (0, 0))
+        
+        # Titre avec effet pixel art
+        title = self.font_title.render("QUEST HEROES", True, self.style.color_primary)
         title_rect = title.get_rect(center=(self.game.WIDTH // 2, 150))
+        # Ombre du titre
+        title_shadow = self.font_title.render("QUEST HEROES", True, (50, 50, 50))
+        screen.blit(title_shadow, (title_rect.x + 4, title_rect.y + 4))
         screen.blit(title, title_rect)
         
         mouse_pos = pygame.mouse.get_pos()
         
-        # Bouton Jouer
-        color_jouer = (100, 200, 100) if self.btn_jouer.collidepoint(mouse_pos) else (50, 150, 50)
-        pygame.draw.rect(screen, color_jouer, self.btn_jouer)
-        pygame.draw.rect(screen, (255, 255, 255), self.btn_jouer, 3)
+        # Boutons avec style pixel art
+        self.style.draw_button(screen, self.btn_jouer, "Jouer", self.font_button,
+                              self.btn_jouer.collidepoint(mouse_pos),
+                              (50, 150, 50) if not self.btn_jouer.collidepoint(mouse_pos) else None)
         
-        text_jouer = self.font_button.render("Jouer", True, (255, 255, 255))
-        text_rect = text_jouer.get_rect(center=self.btn_jouer.center)
-        screen.blit(text_jouer, text_rect)
+        self.style.draw_button(screen, self.btn_scores, "Scores", self.font_button,
+                              self.btn_scores.collidepoint(mouse_pos),
+                              (50, 100, 150) if not self.btn_scores.collidepoint(mouse_pos) else None)
         
-        # Bouton Scores
-        color_scores = (100, 150, 200) if self.btn_scores.collidepoint(mouse_pos) else (50, 100, 150)
-        pygame.draw.rect(screen, color_scores, self.btn_scores)
-        pygame.draw.rect(screen, (255, 255, 255), self.btn_scores, 3)
-        
-        text_scores = self.font_button.render("Scores", True, (255, 255, 255))
-        text_rect = text_scores.get_rect(center=self.btn_scores.center)
-        screen.blit(text_scores, text_rect)
-        
-        # Bouton Quitter
-        color_quitter = (200, 100, 100) if self.btn_quitter.collidepoint(mouse_pos) else (150, 50, 50)
-        pygame.draw.rect(screen, color_quitter, self.btn_quitter)
-        pygame.draw.rect(screen, (255, 255, 255), self.btn_quitter, 3)
-        
-        text_quitter = self.font_button.render("Quitter", True, (255, 255, 255))
-        text_rect = text_quitter.get_rect(center=self.btn_quitter.center)
-        screen.blit(text_quitter, text_rect)
+        self.style.draw_button(screen, self.btn_quitter, "Quitter", self.font_button,
+                              self.btn_quitter.collidepoint(mouse_pos),
+                              (150, 50, 50) if not self.btn_quitter.collidepoint(mouse_pos) else None)

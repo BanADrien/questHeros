@@ -9,6 +9,7 @@ def item_brulure(joueur, event):
     tours = event["tours"]
 
     effects.brulure(cible, tours)
+    return f"{joueur.nom} inflige Brûlure à {cible.nom} !"
 
 
 def item_saignement(joueur, event):
@@ -18,12 +19,14 @@ def item_saignement(joueur, event):
     tours = event["tours"]
 
     effects.saignement(cible, degats_total, tours)
+    return f"{joueur.nom} inflige Saignement à {cible.nom} !"
 
 def item_poison(joueur, event):
     cible = event["cible"]
     tours = event["tours"]
 
     effects.poison(cible, tours)
+    return f"{joueur.nom} empoisonne {cible.nom} !"
 
 def item_vol_de_vie(joueur, event):
     attaquant = event["attaquant"]
@@ -42,6 +45,7 @@ def item_regen(joueur, event):
     tours = event["tours"]
 
     effects.effet_regen(attaquant, montant, tours)
+    return f"{joueur.nom} se régénère de {montant} PV !"
 
 
 # SPECIAUX
@@ -49,8 +53,8 @@ def item_regen(joueur, event):
 
 def item_prendre_focus(joueur, event):
     """Le joueur qui a cet item attire les attaques du monstre"""
-    print(f"> {joueur.nom} attire l'attention des ennemis jusqu'à la fin de la partie !")
     joueur.est_cible = True
+    return f"{joueur.nom} attire l'attention des ennemis !"
 
 
 def item_transformation_hero(joueur, event):
@@ -60,4 +64,6 @@ def item_transformation_hero(joueur, event):
     # Transformation immédiate lors de l'obtention du Cape du héro
     # Ne pas transformer si déjà Héro ou Légende
     if attaquant.nom not in ["Héro", "Légende"]:
-        effects.transformation(attaquant, "Héro", equipe)
+        degats, msg = effects.transformation(attaquant, "Héro", equipe)
+        return msg
+    return f"{attaquant.nom} est déjà un héros légendaire !"

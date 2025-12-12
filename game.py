@@ -25,7 +25,8 @@ class Partie:
         self.heros_choisis = 0
         self.monstres = []
         self.monstre_actuel_index = 0
-        self.tour = 0
+        self.tour = 1
+        self.tours_cumule = 0  # Compteur total des tours sur toute la partie
         self.nom_joueur = ""
         self.victoires = 0
         self.items_par_rarete = {}
@@ -78,7 +79,6 @@ class Partie:
         
     def choisir_equipe(self):
         """Initialise la sélection d'équipe (appelé depuis l'écran de sélection)"""
-        self.nom_joueur = "Joueur"  # ou via un champ de texte GUI
         self.personnages_dispo = list(db.personnages.find())
         self.equipe = []
         self.heros_choisis = 0
@@ -126,11 +126,15 @@ class Partie:
         return self.heros_choisis == 3
         
     def charger_monstres(self):
-        """Charge tous les monstres depuis la DB"""
+        """Charge tous les monstres depuis la DB en préservant leurs données (lieu, message_intro)"""
         monstres_data = list(db.monstres.find())
         self.monstres = []
         for monstre_data in monstres_data:
-            self.monstres.append(Combattant(monstre_data, est_heros=False))
+            combattant = Combattant(monstre_data, est_heros=False)
+            # Préserver les infos d'ambiance
+            combattant.lieu = monstre_data.get("lieu", "menu")
+            combattant.message_intro = monstre_data.get("message_intro", "Vous vous préparez au combat...")
+            self.monstres.append(combattant)
             
     def charger_items(self):
         """Charge tous les items depuis la DB"""
@@ -159,7 +163,8 @@ class Partie:
     def monstre_suivant(self):
         """Passe au monstre suivant"""
         self.monstre_actuel_index += 1
-        self.tour = 0  # Reset le compteur de tours
+        # Repartir au tour 1 pour le nouveau combat, mais garder le cumul global
+        self.tour = 1
         self.hero_actuel_index = 0  # Reset l'index du héro actuel
         return self.obtenir_monstre_actuel()
     
@@ -358,6 +363,7 @@ class Partie:
         }
 
         self.tour += 1
+        self.tours_cumule += 1
         
         # Tour des héros
         tour_heros = self.tour_heros_complet(monstre)
@@ -390,23 +396,68 @@ class Partie:
         self.charger_monstres()
         self.victoires = 0
         self.monstre_actuel_index = 0
-        self.tour = 0
+        # Compteur de tours par combat et cumul global
+        self.tour = 1
+        self.tours_cumule = 0
         self.hero_actuel_index = 0
         
         # Enregistrer les effets d'items au démarrage du combat
         verifier_effet_items(self.equipe)
     
     def sauvegarder_score(self, victoires):
-        """Sauvegarde le score dans la base de données"""
-        nom_joueur = self.nom_joueur if self.nom_joueur else "Joueur"
+        """Sauvegarde le score dans la base de données ET en JSON local"""
+        nom_joueur = self.nom_joueur if self.nom_joueur and self.nom_joueur.strip() else "Joueur"
+        
+        score_data = {
+            "nom_joueur": nom_joueur,
+            "date": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+            "equipe": [h.nom for h in self.equipe],
+            "victoires": victoires,
+            "total_monstres": len(self.monstres),
+            "tours": self.tours_cumule
+        }
+        
+        # Sauvegarder en MongoDB
         db.scores.insert_one({
             "nom_joueur": nom_joueur,
             "date": datetime.now(),
             "equipe": [h.nom for h in self.equipe],
             "victoires": victoires,
             "total_monstres": len(self.monstres),
-            "tours": self.tour
+            "tours": self.tours_cumule
         })
+        
+        # Sauvegarder en JSON local (10 derniers scores)
+        self.sauvegarder_scores_json(score_data)
+        
+    def sauvegarder_scores_json(self, nouveau_score):
+        """Sauvegarde les 10 derniers scores dans un fichier JSON local"""
+        import json
+        import os
+        
+        fichier_scores = "scores.json"
+        scores = []
+        
+        # Charger les scores existants
+        if os.path.exists(fichier_scores):
+            try:
+                with open(fichier_scores, 'r', encoding='utf-8') as f:
+                    scores = json.load(f)
+            except:
+                scores = []
+        
+        # Ajouter le nouveau score en début
+        scores.insert(0, nouveau_score)
+        
+        # Garder seulement les 10 derniers
+        scores = scores[:10]
+        
+        # Sauvegarder en JSON
+        try:
+            with open(fichier_scores, 'w', encoding='utf-8') as f:
+                json.dump(scores, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            print(f"Erreur lors de la sauvegarde JSON: {e}")
         
     def reinitialiser_equipe(self):
         """Réinitialise la vie de l'équipe (entre les monstres)"""

@@ -11,4 +11,4 @@ Fonctionnalités :
 -obtention d'item après avoir vaincu un monstrre choisis en fonction de sa rareté
 -interface graphique pygame
 
-ps : transition terminal interface fait en majorité par ia car je m'y suis pris trop tard pour m'en sortir moi meme
+ps : transition terminal - interface fait en majorité par ia car je m'y suis pris trop tard pour m'en sortir moi meme
