@@ -511,15 +511,15 @@ def init_db():
     ]
         
     monstres = [
-        # {"nom": "Gobelin", "atk": 10, "def": 5, "pv_max": 50, "status": [], "peut_attaquer": True, "lieu": "prairie", "article": "un", "message_intro": "Vous pénétrez dans une prairie verdoyante..."},
-        # {"nom": "Squelette", "atk": 15, "def": 4, "pv_max": 70, "status": [], "peut_attaquer": True, "lieu": "cimetiere", "article": "un", "message_intro": "Un frisson parcourt votre échine en entrant dans ce cimetière..."},
-        # {"nom": "Loup", "atk": 15, "def": 6, "pv_max": 70, "status": [], "peut_attaquer": True, "lieu": "foret", "article": "un", "message_intro": "Vous vous enfoncez dans une forêt sombre et menaçante..."},
-        # {"nom": "Orc", "atk": 20, "def": 8, "pv_max": 120, "status": [], "peut_attaquer": True, "lieu": "montagne", "article": "un", "message_intro": "Les montagnes rocheuses s'élèvent devant vous..."},
-        # {"nom": "Troll", "atk": 25, "def": 10, "pv_max": 150, "status": [], "peut_attaquer": True, "lieu": "montagne", "article": "un", "message_intro": "Vous pataugez dans un marais putride et inhospitalier..."},
-        # {"nom": "Golem", "atk": 20, "def": 40, "pv_max": 160, "status": [], "peut_attaquer": True, "lieu": "montagne", "article": "un", "message_intro": "L'obscurité de la caverne vous enveloppe..."},
-        # {"nom": "Dragon", "atk": 35, "def": 20, "pv_max": 300, "status": [], "peut_attaquer": True, "lieu": "volcan", "article": "un", "message_intro": "La chaleur intense du volcan vous assaille..."},
-        # {"nom": "Demon", "atk": 50, "def": 30, "pv_max": 200, "status": [], "peut_attaquer": True, "lieu": "volcan", "article": "un", "message_intro": "Vous descendez dans les profondeurs infernales..."},
-        # {"nom": "Ange", "atk": 60, "def": 40, "pv_max": 400, "status": [], "peut_attaquer": True, "lieu": "paradis", "article": "un", "message_intro": "Une lumière divine illumine votre chemin..."},
+        {"nom": "Gobelin", "atk": 10, "def": 5, "pv_max": 50, "status": [], "peut_attaquer": True, "lieu": "prairie", "article": "un", "message_intro": "Vous pénétrez dans une prairie verdoyante..."},
+        {"nom": "Squelette", "atk": 15, "def": 4, "pv_max": 70, "status": [], "peut_attaquer": True, "lieu": "cimetiere", "article": "un", "message_intro": "Un frisson parcourt votre échine en entrant dans ce cimetière..."},
+        {"nom": "Loup", "atk": 15, "def": 6, "pv_max": 70, "status": [], "peut_attaquer": True, "lieu": "foret", "article": "un", "message_intro": "Vous vous enfoncez dans une forêt sombre et menaçante..."},
+        {"nom": "Orc", "atk": 20, "def": 8, "pv_max": 120, "status": [], "peut_attaquer": True, "lieu": "montagne", "article": "un", "message_intro": "Les montagnes rocheuses s'élèvent devant vous..."},
+        {"nom": "Troll", "atk": 25, "def": 10, "pv_max": 150, "status": [], "peut_attaquer": True, "lieu": "montagne", "article": "un", "message_intro": "Vous pataugez dans un marais putride et inhospitalier..."},
+        {"nom": "Golem", "atk": 20, "def": 40, "pv_max": 160, "status": [], "peut_attaquer": True, "lieu": "montagne", "article": "un", "message_intro": "L'obscurité de la caverne vous enveloppe..."},
+        {"nom": "Dragon", "atk": 35, "def": 20, "pv_max": 300, "status": [], "peut_attaquer": True, "lieu": "volcan", "article": "un", "message_intro": "La chaleur intense du volcan vous assaille..."},
+        {"nom": "Demon", "atk": 50, "def": 30, "pv_max": 200, "status": [], "peut_attaquer": True, "lieu": "volcan", "article": "un", "message_intro": "Vous descendez dans les profondeurs infernales..."},
+        {"nom": "Ange", "atk": 60, "def": 40, "pv_max": 400, "status": [], "peut_attaquer": True, "lieu": "paradis", "article": "un", "message_intro": "Une lumière divine illumine votre chemin..."},
         {"nom": "La Mort", "atk": 120, "def": 0, "pv_max": 300, "status": [], "peut_attaquer": True, "lieu": "neant", "article": "la", "message_intro": "Le néant vous entoure, la fin est proche..."},
         
         
