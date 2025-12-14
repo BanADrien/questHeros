@@ -9,6 +9,17 @@ class Defaite:
         self.font_text = self.style.font_text
         self.font_small = self.style.font_small
         
+        # Charger l'image de fond défaite
+        self.background = None
+        try:
+            import os
+            defaite_path = "assets/defaite.png"
+            if os.path.exists(defaite_path):
+                self.background = pygame.image.load(defaite_path)
+                self.background = pygame.transform.scale(self.background, (game.WIDTH, game.HEIGHT))
+        except Exception as e:
+            print(f"Erreur chargement defaite.png: {e}")
+        
         # Sauvegarder le score
         self.game.sauvegarder_score(self.game.victoires)
         
@@ -44,6 +55,18 @@ class Defaite:
                     self.game.change_screen(Menu)
     
     def draw(self, screen):
+        # Fond d'écran défaite
+        if self.background:
+            screen.blit(self.background, (0, 0))
+        else:
+            screen.fill((40, 20, 20))
+        
+        # Overlay semi-transparent pour lisibilité
+        overlay = pygame.Surface((self.game.WIDTH, self.game.HEIGHT))
+        overlay.set_alpha(150)
+        overlay.fill((0, 0, 0))
+        screen.blit(overlay, (0, 0))
+        
         # Titre
         title = self.font_title.render("DÉFAITE", True, (255, 100, 100))
         screen.blit(title, (self.game.WIDTH // 2 - title.get_width() // 2, 100))

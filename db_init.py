@@ -511,7 +511,7 @@ def init_db():
     ]
         
     monstres = [
-        {"nom": "Gobelin", "atk": 10, "def": 5, "pv_max": 50, "status": [], "peut_attaquer": True, "lieu": "prairie", "article": "un", "message_intro": "Vous pénétrez dans une prairie verdoyante..."},
+        # {"nom": "Gobelin", "atk": 10, "def": 5, "pv_max": 50, "status": [], "peut_attaquer": True, "lieu": "prairie", "article": "un", "message_intro": "Vous pénétrez dans une prairie verdoyante..."},
         # {"nom": "Squelette", "atk": 15, "def": 4, "pv_max": 70, "status": [], "peut_attaquer": True, "lieu": "cimetiere", "article": "un", "message_intro": "Un frisson parcourt votre échine en entrant dans ce cimetière..."},
         # {"nom": "Loup", "atk": 15, "def": 6, "pv_max": 70, "status": [], "peut_attaquer": True, "lieu": "foret", "article": "un", "message_intro": "Vous vous enfoncez dans une forêt sombre et menaçante..."},
         # {"nom": "Orc", "atk": 20, "def": 8, "pv_max": 120, "status": [], "peut_attaquer": True, "lieu": "montagne", "article": "un", "message_intro": "Les montagnes rocheuses s'élèvent devant vous..."},

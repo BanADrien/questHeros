@@ -9,6 +9,17 @@ class Victoire:
         self.font_text = self.style.font_text
         self.font_small = self.style.font_small
         
+        # Charger l'image de fond victoire
+        self.background = None
+        try:
+            import os
+            victoire_path = "assets/victoire.png"
+            if os.path.exists(victoire_path):
+                self.background = pygame.image.load(victoire_path)
+                self.background = pygame.transform.scale(self.background, (game.WIDTH, game.HEIGHT))
+        except Exception as e:
+            print(f"Erreur chargement victoire.png: {e}")
+        
         # Sauvegarder le score
         self.game.sauvegarder_score(self.game.victoires)
         
@@ -32,6 +43,18 @@ class Victoire:
                     self.game.change_screen(Menu)
     
     def draw(self, screen):
+        # Fond d'écran victoire
+        if self.background:
+            screen.blit(self.background, (0, 0))
+        else:
+            screen.fill((20, 40, 20))
+        
+        # Overlay semi-transparent pour lisibilité
+        overlay = pygame.Surface((self.game.WIDTH, self.game.HEIGHT))
+        overlay.set_alpha(150)
+        overlay.fill((0, 0, 0))
+        screen.blit(overlay, (0, 0))
+        
         # Titre
         title = self.font_title.render("VICTOIRE !", True, (255, 255, 100))
         screen.blit(title, (self.game.WIDTH // 2 - title.get_width() // 2, 100))
@@ -42,7 +65,7 @@ class Victoire:
         stats = [
             f"Monstres vaincus : {self.game.victoires}/{len(self.game.monstres)}",
             f"Tours totaux : {self.game.tour}",
-            f"Équipe survivante :"
+            f"Équipe :"
         ]
         
         for stat in stats:

@@ -52,7 +52,7 @@ class Combat:
         self.pending_metamorphose = None
         
         # Bouton passer le tour (aligné avec les attaques) - hauteur réduite
-        self.btn_passer = pygame.Rect(self.game.WIDTH - 260, 715, 230, 115)
+        self.btn_passer = pygame.Rect(self.game.WIDTH - 240, 800, 200, 70)
         
     def creer_boutons_attaques(self):
         """Crée les boutons pour les attaques du héros actuel"""
@@ -299,15 +299,15 @@ class Combat:
                 screen.blit(self.monstre_sprite, (sprite_x, sprite_y))
         
         # Bandeau de titre
-        title_rect = pygame.Rect(0, 0, self.game.WIDTH, 55)
+        title_rect = pygame.Rect(0, 0, self.game.WIDTH, 45)
         self.draw_pixel_box(screen, title_rect, (25, 20, 40), (200, 180, 100), 4)
         
-        title = self.font_title.render(f"COMBAT - Tour {self.game.tour}", True, (255, 220, 100))
+        title = self.font_text.render(f"COMBAT - Tour {self.game.tour}", True, (255, 220, 100))
         title_x = self.game.WIDTH // 2 - title.get_width() // 2
         # Ombre
-        shadow = self.font_title.render(f"COMBAT - Tour {self.game.tour}", True, (60, 40, 0))
-        screen.blit(shadow, (title_x + 2, 12))
-        screen.blit(title, (title_x, 10))
+        shadow = self.font_text.render(f"COMBAT - Tour {self.game.tour}", True, (60, 40, 0))
+        screen.blit(shadow, (title_x + 2, 9))
+        screen.blit(title, (title_x, 7))
         
         # Afficher l'équipe
         self.afficher_equipe(screen)
@@ -330,11 +330,12 @@ class Combat:
                 
                 # Stacks badge
                 if hasattr(hero, 'stack') and hero.stack > 0:
-                    stack_bg = pygame.Rect(banner_rect.x + banner_rect.width - 110, banner_rect.y + 8, 100, 24)
+                    stack_bg = pygame.Rect(banner_rect.x + banner_rect.width - 150, banner_rect.y + 4, 140, 32)
                     pygame.draw.rect(screen, (50, 40, 25), stack_bg, border_radius=4)
-                    pygame.draw.rect(screen, (200, 160, 80), stack_bg, 1, border_radius=4)
+                    pygame.draw.rect(screen, (200, 160, 80), stack_bg, 2, border_radius=4)
                     stack_text = self.font_small.render(f"Stacks: {hero.stack}", True, (255, 200, 100))
-                    screen.blit(stack_text, (stack_bg.x + 6, stack_bg.y + 3))
+                    stack_x = stack_bg.x + (stack_bg.width - stack_text.get_width()) // 2
+                    screen.blit(stack_text, (stack_x, stack_bg.y + 5))
         
         # Boutons d'attaque - repositionnés
         mouse_pos = pygame.mouse.get_pos()
@@ -407,14 +408,14 @@ class Combat:
         btn_color = (90, 60, 60) if is_hover else (70, 50, 50)
         border_color = (180, 120, 120) if is_hover else (140, 100, 100)
         
-        self.draw_pixel_box(screen, self.btn_passer, btn_color, border_color, 3)
+        self.draw_pixel_box(screen, self.btn_passer, btn_color, border_color, 2)
         
-        pass_text = self.font_title.render("PASSER", True, (255, 200, 200))
+        pass_text = self.font_small.render("PASSER", True, (255, 200, 200))
         text_x = self.btn_passer.x + (self.btn_passer.width - pass_text.get_width()) // 2
         text_y = self.btn_passer.y + (self.btn_passer.height - pass_text.get_height()) // 2
         # Ombre
-        shadow = self.font_title.render("PASSER", True, (40, 20, 20))
-        screen.blit(shadow, (text_x + 2, text_y + 2))
+        shadow = self.font_small.render("PASSER", True, (40, 20, 20))
+        screen.blit(shadow, (text_x + 1, text_y + 1))
         screen.blit(pass_text, (text_x, text_y))
         
         # Messages
@@ -455,8 +456,8 @@ class Combat:
             # Stacks à droite du nom
             if hasattr(hero, 'stack') and hero.stack > 0:
                 stack = self.font_small.render(f"x{hero.stack}", True, (255, 200, 100))
-                stack_x = hero_x + 300 - stack.get_width()
-                screen.blit(stack, (stack_x, hero_y + 2))
+                stack_x = hero_x + 280 - stack.get_width()
+                screen.blit(stack, (stack_x, hero_y + 3))
             
             # Stats ATK et DEF - inline simples
             stats_y = hero_y + 28
@@ -504,19 +505,19 @@ class Combat:
         
         # Position plus à droite
         x = 680
-        y = 90
+        y = 65
 
-        # Nom avec effet d'ombre prononcé
-        nom = self.font_title.render(monstre.nom.upper(), True, (255, 120, 120))
-        shadow = self.font_title.render(monstre.nom.upper(), True, (40, 10, 10))
+        # Nom avec effet d'ombre prononcé - taille réduite
+        nom = self.font_text.render(monstre.nom.upper(), True, (255, 120, 120))
+        shadow = self.font_text.render(monstre.nom.upper(), True, (40, 10, 10))
         # Double ombre pour plus de profondeur
-        screen.blit(shadow, (x + 3, y + 3))
-        shadow2 = self.font_title.render(monstre.nom.upper(), True, (60, 15, 15))
-        screen.blit(shadow2, (x + 2, y + 2))
+        screen.blit(shadow, (x + 2, y + 2))
+        shadow2 = self.font_text.render(monstre.nom.upper(), True, (60, 15, 15))
+        screen.blit(shadow2, (x + 1, y + 1))
         screen.blit(nom, (x, y))
 
         # Barre de vie élégante sans case
-        bar_y = y + 55
+        bar_y = y + 40
         bar_width = 420
         
         # Fond sombre derrière la barre pour contraste

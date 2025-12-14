@@ -27,16 +27,11 @@ class SelectionEquipe:
         
         # Scroll pour la liste des héros
         self.scroll_offset = 0
-        self.max_visible_rows = 3  # 3 rangées visibles à la fois
         
         # Créer les boutons pour chaque personnage
         self.boutons_persos = []
         self.boutons_selectionnes = []
         self.creer_boutons_personnages()
-        
-        # Boutons de scroll
-        self.btn_scroll_up = pygame.Rect(240, 155, 40, 30)
-        self.btn_scroll_down = pygame.Rect(240, 600, 40, 30)
         
         # Popup de détail au survol
         self.popup_perso = None
@@ -78,34 +73,48 @@ class SelectionEquipe:
     
     def update(self):
         pass
+
+    def _visible_rows(self):
+        """Calcule le nombre de rangées visibles selon la hauteur disponible."""
+        clip_height = self.game.HEIGHT - 235  # même valeur que la zone de clipping
+        row_height = 138  # 120 hauteur bouton + 18 marge
+        return max(1, clip_height // row_height)
+
+    def _scroll_persos(self, delta: int):
+        """Scroll la liste des personnages disponibles, clampée aux bornes."""
+        max_rows = (len(self.game.personnages_dispo) + 1) // 2
+        visible_rows = self._visible_rows()
+        max_scroll = max(0, max_rows - visible_rows)
+        self.scroll_offset = max(0, min(self.scroll_offset + delta, max_scroll))
     
     def handle_events(self, event_list):
         for event in event_list:
+            # Gestion de la molette pour le scroll
+            if event.type == pygame.MOUSEWHEEL:
+                # Scroll global : dès qu'on molette, on défile la liste
+                self._scroll_persos(-event.y)
+                return
+            
             if event.type == pygame.MOUSEBUTTONDOWN:
-                # Boutons de scroll
-                if self.btn_scroll_up.collidepoint(event.pos):
-                    self.scroll_offset = max(0, self.scroll_offset - 1)
-                    return
-                elif self.btn_scroll_down.collidepoint(event.pos):
-                    max_rows = (len(self.game.personnages_dispo) + 1) // 2
-                    if self.scroll_offset < max_rows - self.max_visible_rows:
-                        self.scroll_offset += 1
-                    return
-                
                 # Zone de clipping pour détecter les clics uniquement dans la zone visible
-                clip_rect = pygame.Rect(55, 200, 520, 480)
+                clip_rect = pygame.Rect(45, 145, 520, self.game.HEIGHT - 235)
+
+                # Si la molette (boutons 4/5) est utilisée, gérer le scroll et ignorer la sélection
+                if event.button in (4, 5):
+                    delta = -1 if event.button == 4 else 1
+                    self._scroll_persos(delta)
+                    continue
                 
                 # Vérifier les clics sur les personnages (uniquement ceux visibles)
                 if clip_rect.collidepoint(event.pos):
                     for btn in self.boutons_persos:
-                        # Vérifier si le personnage est dans la rangée visible
-                        row = btn["index"] // 2
-                        if row < self.scroll_offset or row >= self.scroll_offset + self.max_visible_rows:
-                            continue
-                        
                         # Calculer la position ajustée avec le scroll
-                        adjusted_y = btn["rect"].y - (self.scroll_offset * 126)
+                        adjusted_y = btn["rect"].y - (self.scroll_offset * 138)
                         adjusted_rect = pygame.Rect(btn["rect"].x, adjusted_y, btn["rect"].width, btn["rect"].height)
+                        
+                        # Vérifier si le rectangle ajusté est visible dans la zone de clip
+                        if not clip_rect.colliderect(adjusted_rect):
+                            continue
                         
                         # Vérifier si le clic est dans le rectangle ajusté
                         if adjusted_rect.collidepoint(event.pos):
@@ -185,24 +194,13 @@ class SelectionEquipe:
         titre_text = "HEROES DISPONIBLES"
         titre = self.font_text.render(titre_text, True, self.style.color_primary)
         titre_shadow = self.font_text.render(titre_text, True, (30, 30, 30))
-        screen.blit(titre_shadow, (47, 147))
-        screen.blit(titre, (45, 145))
+        screen.blit(titre_shadow, (47, 132))
+        screen.blit(titre, (45, 130))
         
-        # Flèches de scroll stylisées
-        if self.scroll_offset > 0:
-            pygame.draw.polygon(screen, (100, 220, 255), [
-                (self.btn_scroll_up.centerx, self.btn_scroll_up.y + 5),
-                (self.btn_scroll_up.x + 5, self.btn_scroll_up.bottom - 5),
-                (self.btn_scroll_up.right - 5, self.btn_scroll_up.bottom - 5)
-            ])
-        
+        # Indicateur de scroll (molette)
         max_rows = (len(self.game.personnages_dispo) + 1) // 2
-        if self.scroll_offset < max_rows - self.max_visible_rows:
-            pygame.draw.polygon(screen, (100, 220, 255), [
-                (self.btn_scroll_down.centerx, self.btn_scroll_down.bottom - 5),
-                (self.btn_scroll_down.x + 5, self.btn_scroll_down.y + 5),
-                (self.btn_scroll_down.right - 5, self.btn_scroll_down.y + 5)
-            ])
+        max_scroll = max(0, max_rows - self._visible_rows())
+
         
         self.popup_perso = None
 
@@ -214,18 +212,19 @@ class SelectionEquipe:
             "polyvalent": (200, 120, 255),
         }
 
-        # Zone de clipping pour le scroll (assez large pour les 2 colonnes)
-        clip_rect = pygame.Rect(45, 190, 520, 410)
+        # Zone de clipping pour le scroll (toute la hauteur disponible)
+        clip_height = self.game.HEIGHT - 235
+        clip_rect = pygame.Rect(45, 160, 520, clip_height)
         screen.set_clip(clip_rect)
 
         for btn in self.boutons_persos:
-            # Calculer position avec scroll
-            row = btn["index"] // 2
-            if row < self.scroll_offset or row >= self.scroll_offset + self.max_visible_rows:
-                continue
-                
-            adjusted_y = btn["rect"].y - (self.scroll_offset * 126)
+            # Calculer position avec scroll (138 = hauteur bouton 120 + marge 18)
+            adjusted_y = btn["rect"].y - (self.scroll_offset * 138)
             rect = pygame.Rect(btn["rect"].x, adjusted_y, btn["rect"].width, btn["rect"].height)
+            
+            # Vérifier si le bouton est visible dans la zone de clip
+            if not clip_rect.colliderect(rect):
+                continue
             is_hovered = rect.collidepoint(mouse_pos) and clip_rect.collidepoint(mouse_pos)
 
             classe = btn['perso'].get('type_perso', btn['perso'].get('classe', 'N/A'))

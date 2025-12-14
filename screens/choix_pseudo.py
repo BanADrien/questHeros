@@ -8,7 +8,10 @@ class ChoixPseudo:
         self.font_title = self.style.font_title
         self.font_text = self.style.font_text
         self.font_small = self.style.font_small
-        self.input_box = pygame.Rect(340, 340, 600, 60)
+        # Centrer l'input box
+        self.input_box = pygame.Rect(game.WIDTH // 2 - 300, 340, 600, 60)
+        # Centrer le bouton Entrer sous l'input
+        self.btn_entrer = pygame.Rect(game.WIDTH // 2 - 100, 430, 200, 60)
         self.pseudo = ""
         self.active = True  # Toujours actif par défaut
         
@@ -39,6 +42,12 @@ class ChoixPseudo:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if self.input_box.collidepoint(event.pos):
                     self.active = True
+                elif self.btn_entrer.collidepoint(event.pos):
+                    # Clic sur le bouton Entrer
+                    pseudo = self.pseudo.strip() if self.pseudo.strip() else "Joueur"
+                    self.game.nom_joueur = pseudo
+                    from screens.selection_equipe import SelectionEquipe
+                    self.game.change_screen(SelectionEquipe)
 
     def update(self):
         pass
@@ -70,6 +79,16 @@ class ChoixPseudo:
                                    self.active,
                                    not self.pseudo)
         
-        # Indication
-        info = self.font_small.render("Appuyez sur Entrée pour continuer (défaut: Joueur)", True, (150, 200, 150))
-        screen.blit(info, (self.input_box.x, self.input_box.y + 70))
+        # Bouton Entrer
+        mouse_pos = pygame.mouse.get_pos()
+        is_hover = self.btn_entrer.collidepoint(mouse_pos)
+        btn_color = (100, 200, 100) if is_hover else (80, 150, 80)
+        border_color = (200, 255, 200) if is_hover else (150, 200, 150)
+        
+        pygame.draw.rect(screen, btn_color, self.btn_entrer)
+        pygame.draw.rect(screen, border_color, self.btn_entrer, 3)
+        
+        btn_text = self.font_text.render("ENTRER", True, (255, 255, 255))
+        text_x = self.btn_entrer.x + (self.btn_entrer.width - btn_text.get_width()) // 2
+        text_y = self.btn_entrer.y + (self.btn_entrer.height - btn_text.get_height()) // 2
+        screen.blit(btn_text, (text_x, text_y))
