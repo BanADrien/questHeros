@@ -31,10 +31,6 @@ class Partie:
         self.victoires = 0
         self.items_par_rarete = {}
         self.raretes = {}
-        # Config: item de départ (None pour désactiver). Peut être défini par code.
-        # Par défaut, on donne la Cape du héro pour vos tests.
-        self.start_item_name = os.getenv("DEBUG_ITEM_START", "Bouclier du gardien")
-        self.start_item_trigger_event = True
         
         # État du combat
         self.hero_actuel_index = 0  # Pour gérer quel héro attaque
@@ -66,11 +62,6 @@ class Partie:
         # Ecran actuel (menu par défaut)
         from screens.menu import Menu
         self.current_screen = Menu(self)
-
-    def set_start_item(self, item_name, trigger_event=True):
-        """Définit l'item donné automatiquement au début du combat."""
-        self.start_item_name = item_name
-        self.start_item_trigger_event = trigger_event
         
     def run(self):
         while self.running:
@@ -457,25 +448,8 @@ class Partie:
         self.tours_cumule = 0
         self.hero_actuel_index = 0
         
-        # Donner un item de départ si demandé (nom fixé), sinon générer un item aléatoire
-        try:
-            if self.equipe:
-                hero = self.equipe[0]
-                if self.start_item_name:
-                    # Utiliser le nom fourni
-                    item = test_item_giver(self.equipe, self.start_item_name, trigger_event=self.start_item_trigger_event)
-                    if item:
-                        print(f"Item de départ (fixe): {item.nom} équipé sur {hero.nom}")
-                else:
-                    from items import obtenir_item, equiper_item_a_hero
-                    item = obtenir_item(self.equipe, {'commun': 40, 'peu_commun': 30, 'rare': 20, 'legendaire': 10}, self.items_par_rarete)
-                    if item:
-                        equiper_item_a_hero(hero, item)
-                        verifier_effet_items(self.equipe)
-                        events.trigger("obtention_item", hero, item, self.equipe)
-                        print(f"Item de départ (aléatoire): {item.nom} équipé sur {hero.nom}")
-        except Exception as e:
-            print(f"[Start Item] Erreur lors de l'attribution: {e}")
+        # Enregistrer les effets d'items au démarrage du combat
+        verifier_effet_items(self.equipe)
     
     def sauvegarder_score(self, victoires):
         """Sauvegarde le score dans la base de données ET en JSON local"""
