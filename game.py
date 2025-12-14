@@ -38,11 +38,11 @@ class Partie:
         
         # config fenetre
         pygame.init()
-        self.WIDTH = 1280
-        self.HEIGHT = 720
+        self.WIDTH = 1600
+        self.HEIGHT = 900
 
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
-        pygame.display.set_caption("Mon RPG")
+        pygame.display.set_caption("Quest Heroes")
 
         self.clock = pygame.time.Clock()
         self.running = True

@@ -45,12 +45,12 @@ class SelectionItem:
         """Crée les boutons pour chaque héros"""
         self.boutons_heros = []
         
-        x_start = self.game.WIDTH // 2 - 400
-        y_start = 300
+        x_start = self.game.WIDTH // 2 - 480
+        y_start = 350
         
         for idx, hero in enumerate(self.game.equipe):
             btn = {
-                "rect": pygame.Rect(x_start + idx * 270, y_start, 250, 100),
+                "rect": pygame.Rect(x_start + idx * 320, y_start, 300, 120),
                 "hero": hero,
                 "index": idx
             }

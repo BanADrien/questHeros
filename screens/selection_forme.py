@@ -42,11 +42,11 @@ class SelectionForme:
         """Crée les boutons pour chaque forme disponible"""
         self.boutons_formes = []
         
-        x_start = 100
-        y_start = 200
-        largeur = 350
-        hauteur = 150
-        espacement = 30
+        x_start = 150
+        y_start = 220
+        largeur = 400
+        hauteur = 170
+        espacement = 40
         
         for idx, forme in enumerate(self.formes_data):
             ligne = idx // 2

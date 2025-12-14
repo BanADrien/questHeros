@@ -22,12 +22,12 @@ class IntroAventure:
             intro_path = "assets/intro.png"
             if os.path.exists(intro_path):
                 self.background = pygame.image.load(intro_path)
-                self.background = pygame.transform.scale(self.background, (1280, 720))
+                self.background = pygame.transform.scale(self.background, (game.WIDTH, game.HEIGHT))
         except Exception as e:
             print(f"Erreur chargement intro.png: {e}")
         
         # Timer pour passer automatiquement à l'écran suivant
-        self.timer = 240
+        self.timer = 200
         
         # Noms des héros
         self.equipe_noms = [hero.nom for hero in self.game.equipe]
@@ -42,13 +42,13 @@ class IntroAventure:
         
         # Overlay semi-transparent
         overlay = pygame.Surface((self.game.WIDTH, self.game.HEIGHT))
-        overlay.set_alpha(150)
+        overlay.set_alpha(180)
         overlay.fill((0, 0, 0))
         screen.blit(overlay, (0, 0))
         
         # Petit message en haut
-        header_surface = self.font_small.render("L'aventure commence...", True, (180, 180, 180))
-        header_rect = header_surface.get_rect(center=(640, 100))
+        header_surface = self.font_texte.render("L'aventure commence...", True, (200, 200, 200))
+        header_rect = header_surface.get_rect(center=(self.game.WIDTH // 2, 150))
         screen.blit(header_surface, header_rect)
         
         # Construire la phrase avec les noms des héros
@@ -59,14 +59,14 @@ class IntroAventure:
         else:
             phrase = f"{', '.join(self.equipe_noms[:-1])} et {self.equipe_noms[-1]} partent à l'aventure"
         
-        # Afficher la phrase
-        phrase_surface = self.font_texte.render(phrase, True, (255, 215, 0))
-        phrase_rect = phrase_surface.get_rect(center=(640, 350))
+        # Afficher la phrase principale
+        phrase_surface = self.font_texte.render(phrase, True, (255, 220, 100))
+        phrase_rect = phrase_surface.get_rect(center=(self.game.WIDTH // 2, self.game.HEIGHT // 2 - 20))
         screen.blit(phrase_surface, phrase_rect)
         
         # Message discret en bas
-        hint_surface = self.font_small.render("Appuyez sur une touche pour continuer", True, (120, 120, 120))
-        hint_rect = hint_surface.get_rect(center=(640, 670))
+        hint_surface = self.font_small.render("Appuyez sur une touche pour continuer", True, (150, 150, 150))
+        hint_rect = hint_surface.get_rect(center=(self.game.WIDTH // 2, self.game.HEIGHT - 100))
         screen.blit(hint_surface, hint_rect)
     
     def handle_events(self, event_list):
@@ -88,26 +88,10 @@ class IntroAventure:
                 self.passer_au_combat()
     
     def passer_au_combat(self):
-        """Passe à l'écran d'introduction du premier monstre"""
-        from screens.intro_combat import IntroCombat
+        """Passe directement au combat"""
+        # Initialiser le combat
+        self.game.initialiser_combat()
         
-        # Récupérer les infos du premier monstre
-        monstre = self.game.obtenir_monstre_actuel()
-        
-        if monstre is None:
-            # Si pas de monstre, retourner au menu
-            from screens.menu import Menu
-            self.game.change_screen(Menu)
-            return
-        
-        # Construire le dictionnaire monstre_dict
-        if hasattr(monstre, '_raw_data'):
-            monstre_dict = monstre._raw_data
-        else:
-            monstre_dict = {
-                "nom": monstre.nom,
-                "lieu": getattr(monstre, "lieu", "menu"),
-                "message_intro": getattr(monstre, "message_intro", "Un monstre apparaît !")
-            }
-        
-        self.game.change_screen(lambda g: IntroCombat(g, monstre_dict))
+        # Passer directement à l'écran de combat
+        from screens.combat import Combat
+        self.game.change_screen(Combat)

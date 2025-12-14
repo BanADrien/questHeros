@@ -28,6 +28,8 @@ class Combattant:
         self.status = data.get("status", [])
     
     def est_vivant(self):
+        # Un combattant est vivant si ses PV sont strictement positifs
+        # 0 PV ou moins = mort
         return self.pv > 0
     
     def prendre_degats(self, degats):

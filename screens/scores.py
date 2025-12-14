@@ -52,14 +52,14 @@ class Scores:
         # En-têtes du tableau
         y = 140
         headers = ["#", "Joueur", "Victoires", "Tours", "Équipe"]
-        x_positions = [100, 200, 450, 650, 800]
+        x_positions = [150, 280, 600, 850, 1050]
         
         for i, header in enumerate(headers):
             text = self.font_text.render(header, True, (200, 200, 200))
             screen.blit(text, (x_positions[i], y))
         
         # Ligne de séparation
-        pygame.draw.line(screen, (150, 150, 150), (80, y + 40), (self.game.WIDTH - 80, y + 40), 2)
+        pygame.draw.line(screen, (150, 150, 150), (120, y + 40), (self.game.WIDTH - 120, y + 40), 2)
         
         # Afficher les scores
         y = 200

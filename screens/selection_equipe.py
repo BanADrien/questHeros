@@ -17,7 +17,7 @@ class SelectionEquipe:
             menu_path = "assets/menu.png"
             if os.path.exists(menu_path):
                 self.background = pygame.image.load(menu_path)
-                self.background = pygame.transform.scale(self.background, (1280, 720))
+                self.background = pygame.transform.scale(self.background, (game.WIDTH, game.HEIGHT))
         except Exception as e:
             print(f"Erreur chargement menu.png: {e}")
         self.font_tiny = self.style.font_tiny
@@ -56,11 +56,11 @@ class SelectionEquipe:
         
         # Layout: 2 colonnes - gauche pour les persos disponibles, droite pour l'équipe
         persos_par_ligne = 2
-        largeur_btn = 215
-        hauteur_btn = 108
-        marge = 16
-        start_x = 45
-        start_y = 190
+        largeur_btn = 240
+        hauteur_btn = 120
+        marge = 18
+        start_x = 55
+        start_y = 200
         
         for idx, perso in enumerate(self.game.personnages_dispo):
             ligne = idx // persos_par_ligne
@@ -93,7 +93,7 @@ class SelectionEquipe:
                     return
                 
                 # Zone de clipping pour détecter les clics uniquement dans la zone visible
-                clip_rect = pygame.Rect(45, 190, 440, 410)
+                clip_rect = pygame.Rect(55, 200, 520, 480)
                 
                 # Vérifier les clics sur les personnages (uniquement ceux visibles)
                 if clip_rect.collidepoint(event.pos):

@@ -82,7 +82,7 @@ def verifier_effet_items(equipe_joueurs):
                         }
                     
                     # Appeler la fonction avec le joueur et l'event
-    try:
+                    try:
                         message = fonction(joueur, event)
                         # Si la fonction retourne un message, on le stocke pour l'afficher
                         if message and hasattr(joueur, '_item_messages'):
