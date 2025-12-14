@@ -44,12 +44,29 @@ def equiper_item_a_hero(hero, item):
     return False
 
     
-def test_item_giver(equipe, nom_item):
+def test_item_giver(equipe, nom_item, trigger_event=True):
+    """Équipe le premier héros avec un item précis et déclenche l'événement d'obtention (optionnel)."""
     from db_init import get_db
+    from event_effect import verifier_effet_items
+    from effects import transformation
+
     db = get_db()
-    item_data = db.items.find_one({"nom": nom_item}, {"_id": 0}) 
-    if item_data:
-        item = Item(item_data)
-        equipe[0].equiper_item(item)
-        return item
-    return None
+    item_data = db.items.find_one({"nom": nom_item}, {"_id": 0})
+    if not item_data:
+        return None
+
+    item = Item(item_data)
+    equipe[0].equiper_item(item)
+
+    # (Re)brancher les effets des items pour le test
+    verifier_effet_items(equipe)
+
+    # Déclencher l'événement d'obtention pour tester les effets immédiats (ex: cape -> transformation)
+    if trigger_event:
+        events.trigger("obtention_item", equipe[0], item, equipe)
+
+    # Fallback: forcer la transformation si cape non appliquée
+    if item.nom == "Cape du héro" and equipe[0].nom != "Héro":
+        transformation(equipe[0], "Héro", equipe)
+
+    return item

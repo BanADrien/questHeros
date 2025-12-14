@@ -43,6 +43,9 @@ class Combat:
         self.en_attente_action = True
         self.messages = []
         self.message_timer = 0
+
+        # Icônes de statuts (assets/effets/*.png)
+        self.status_icons = self._load_status_icons()
         
         # Boutons d'attaque
         self.boutons_attaques = []
@@ -105,6 +108,13 @@ class Combat:
         resultat = self.game.tour_monstre(monstre)
         self.messages = resultat["messages"]
         self.message_timer = 180
+
+        # Si le monstre est mort à cause d'un statut avant d'attaquer, finir le combat
+        if monstre and not monstre.est_vivant():
+            self.game.victoires += 1
+            from screens.selection_item import SelectionItem
+            self.game.change_screen(SelectionItem)
+            return
         
         if self.game.verifier_defaite():
             from screens.defaite import Defaite
@@ -198,9 +208,23 @@ class Combat:
         self.messages = resultat.get("messages", [])
         self.message_timer = 120
 
+        if resultat.get("hero_ko"):
+            if self.game.verifier_defaite():
+                from screens.defaite import Defaite
+                self.game.change_screen(Defaite)
+                return
+            self.passer_au_hero_suivant()
+            return
+
         if resultat.get("ouvrir_selection_item") and resultat.get("item_cree"):
             from screens.selection_item import SelectionItem
-            self.game.change_screen(lambda g: SelectionItem(g, item_override=resultat["item_cree"], retour_combat=True))
+            # Ouvrir la sélection d'item puis revenir dans ce combat à l'état courant
+            self.game.change_screen(lambda g: SelectionItem(
+                g,
+                item_override=resultat["item_cree"],
+                retour_combat=True,
+                combat_retour=self,
+            ))
             return
         
         if not resultat.get("monstre_vivant", True):
@@ -209,6 +233,11 @@ class Combat:
             self.game.change_screen(SelectionItem)
             return
         
+        self.passer_au_hero_suivant()
+
+    def reprendre_apres_item(self):
+        """Reprend le flux après un passage par la sélection d'item (invention)."""
+        # L'attaque a déjà été consommée ; on passe au héros suivant / tour suivant
         self.passer_au_hero_suivant()
     
     def draw_pixel_box(self, screen, rect, bg_color, border_color, thickness=3):
@@ -261,8 +290,97 @@ class Combat:
         # Valeur
         value_surf = self.font_small.render(str(value), True, color)
         screen.blit(value_surf, (x + width - value_surf.get_width() - 8, y + 4))
+
+    def _load_status_icons(self):
+        """Charge les icônes de statuts si disponibles, sinon dictionnaire vide."""
+        import os
+        base = os.path.join("assets", "effets")
+        mapping = {
+            "FIRE": "brulure.png",
+            "BLOOD": "saignement.png",
+            "POIS": "poison.png",
+            "HEAL": "regen.png",
+            "DEF": "def.png",
+            "ATK": "atk.png",
+            "BUFF": None,  # pas d'asset dédié
+        }
+        icons = {}
+        for key, fname in mapping.items():
+            if not fname:
+                continue
+            path = os.path.join(base, fname)
+            if os.path.exists(path):
+                try:
+                    surf = pygame.image.load(path).convert_alpha()
+                    icons[key] = pygame.transform.smoothscale(surf, (22, 22))
+                except Exception as e:
+                    print(f"Erreur chargement icone statut {key}: {e}")
+        return icons
+
+    def _status_token(self, stat_name: str):
+        """Retourne (label court, couleur, icon_key) pour un statut."""
+        if not stat_name:
+            return ("?", (180, 180, 180), None)
+        key = stat_name.lower()
+        if key.startswith("brul") or key.startswith("brûl"):
+            return ("FIRE", (220, 120, 80), "FIRE")
+        if key.startswith("saign") or key.startswith("sang"):
+            return ("BLOOD", (200, 70, 110), "BLOOD")
+        if key.startswith("poison") or key.startswith("tox"):
+            return ("POIS", (120, 200, 120), "POIS")
+        if key.startswith("regen") or key.startswith("soin"):
+            return ("HEAL", (90, 200, 140), "HEAL")
+        if key.startswith("def"):
+            return ("DEF", (120, 170, 255), "DEF")
+        if key.startswith("atk"):
+            return ("ATK", (255, 150, 120), "ATK")
+        return ("BUFF", (200, 180, 120), "BUFF")
+
+    def _render_status_chip(self, screen, x, y, label, color, turns, icon_key=None):
+        """Affiche un chip statuts compact: icône si présente, sinon badge couleur."""
+        padding = 6
+        icon = self.status_icons.get(icon_key) if icon_key else None
+
+        if icon:
+            icon_rect = icon.get_rect()
+            icon_rect.topleft = (x, y)
+            screen.blit(icon, icon_rect)
+            turns_txt = self.font_tiny.render(f"({turns})", True, (220, 200, 200))
+            screen.blit(turns_txt, (icon_rect.right + 6, icon_rect.y + 2))
+            return icon_rect.right + 6 + turns_txt.get_width() + 10
+
+        # Fallback badge couleur
+        txt = self.font_tiny.render(label, True, (20, 20, 20))
+        badge_w = txt.get_width() + padding * 2
+        badge_h = txt.get_height() + 6
+        badge_rect = pygame.Rect(x, y, badge_w, badge_h)
+        pygame.draw.rect(screen, color, badge_rect, border_radius=4)
+        pygame.draw.rect(screen, (30, 30, 30), badge_rect, 1, border_radius=4)
+        screen.blit(txt, (badge_rect.x + padding, badge_rect.y + 3))
+
+        turns_txt = self.font_tiny.render(f"({turns})", True, (220, 200, 200))
+        screen.blit(turns_txt, (badge_rect.right + 6, badge_rect.y + 3))
+        return badge_rect.right + 6 + turns_txt.get_width() + 10
+
+    def _render_item_tooltip(self, screen, pos, items):
+        padding = 8
+        lines = [self.font_small.render(it, True, (240, 240, 255)) for it in items]
+        width = max(line.get_width() for line in lines) + padding * 2
+        height = sum(line.get_height() for line in lines) + padding * 2 + (len(lines) - 1) * 2
+        surf = pygame.Surface((width, height), pygame.SRCALPHA)
+        surf.fill((15, 15, 25, 235))
+        pygame.draw.rect(surf, (120, 120, 200), surf.get_rect(), 1, border_radius=6)
+        y = padding
+        for line in lines:
+            surf.blit(line, (padding, y))
+            y += line.get_height() + 2
+        screen.blit(surf, pos)
     
     def draw(self, screen):
+        # Reset tooltip info and cache souris pour ce frame
+        self._item_hover = None
+        self.mouse_pos = pygame.mouse.get_pos()
+
         # Fond du lieu
         if self.background:
             screen.blit(self.background, (0, 0))
@@ -314,6 +432,11 @@ class Combat:
         
         # Afficher le monstre
         self.afficher_monstre(screen)
+
+        # Tooltip items si survol
+        if self._item_hover:
+            pos, items = self._item_hover
+            self._render_item_tooltip(screen, pos, items)
         
         # Bannière du héros actuel - élégante
         if self.hero_actuel_index < len(self.game.equipe):
@@ -338,7 +461,7 @@ class Combat:
                     screen.blit(stack_text, (stack_x, stack_bg.y + 5))
         
         # Boutons d'attaque - repositionnés
-        mouse_pos = pygame.mouse.get_pos()
+        mouse_pos = self.mouse_pos
 
         for btn in self.boutons_attaques:
             # Couleurs selon état
@@ -433,7 +556,7 @@ class Combat:
         
         for idx, hero in enumerate(self.game.equipe):
             # Héros sans case - épuré
-            hero_h = 115
+            hero_h = 140
             hero_x = x
             hero_y = y
             
@@ -477,18 +600,47 @@ class Combat:
             screen.blit(hp_text, (hero_x + hp_bar_width + 8, hp_y + 2))
             
             # Statuts/Buffs
-            if hasattr(hero, 'status') and hero.status:
-                status_y = hero_y + 82
-                statuts = []
-                for s in hero.status:
+            status_sources = []
+            if hasattr(hero, 'status'):
+                status_sources.extend(hero.status)
+            if hasattr(hero, 'buffs'):
+                status_sources.extend(hero.buffs)
+
+            status_y = hero_y + 82
+            if status_sources:
+                x_cursor = hero_x
+                chips_drawn = 0
+                for s in status_sources:
                     t = s.get('tours_restants', 0)
-                    if t > 0:
-                        statuts.append(f"{s.get('stat', '?')[:4]}({t})")
-                
-                if statuts:
-                    status_txt = " • ".join(statuts[:3])
-                    status_surf = self.font_tiny.render(status_txt, True, (255, 180, 150))
-                    screen.blit(status_surf, (hero_x, status_y))
+                    if t <= 0:
+                        continue
+                    label, color, icon_key = self._status_token(s.get('stat', '?'))
+                    x_cursor = self._render_status_chip(screen, x_cursor, status_y, label, color, t, icon_key)
+                    chips_drawn += 1
+                    if chips_drawn >= 3:
+                        break
+
+            # Items sous le héros
+            items = getattr(hero, 'items', [])
+            items_y = status_y + 20
+            if items:
+                noms_items = [it.nom for it in items]
+                if len(noms_items) > 3:
+                    noms_items = noms_items[:3] + ["..."]
+                txt_items = "Items: " + " | ".join(noms_items)
+            else:
+                txt_items = "Items: aucun"
+
+            items_surface = self.font_tiny.render(txt_items, True, (190, 190, 210))
+            screen.blit(items_surface, (hero_x, items_y))
+
+            # Tooltip complet si plus de 3 items et survol du texte
+            if items and len(items) > 3:
+                rect = items_surface.get_rect(topleft=(hero_x, items_y))
+                if rect.collidepoint(self.mouse_pos):
+                    full_list = [it.nom for it in items]
+                    tooltip_pos = (hero_x, items_y + items_surface.get_height() + 6)
+                    self._item_hover = (tooltip_pos, full_list)
             
             # Ligne de séparation subtile entre héros
             if idx < len(self.game.equipe) - 1:
@@ -541,22 +693,25 @@ class Combat:
         self.draw_stat_box(screen, x + 105, stats_y, "DEF", monstre.defense, (150, 200, 255))
 
         # Statuts avec fond semi-transparent
-        if hasattr(monstre, 'status') and monstre.status:
-            statuts = []
-            for s in monstre.status:
+        monstre_statuses = []
+        if hasattr(monstre, 'status'):
+            monstre_statuses.extend(monstre.status)
+        if hasattr(monstre, 'buffs'):
+            monstre_statuses.extend(monstre.buffs)
+
+        if monstre_statuses:
+            status_y = stats_y + 42
+            x_cursor = x
+            chips_drawn = 0
+            for s in monstre_statuses:
                 t = s.get('tours_restants', 0)
-                if t > 0:
-                    statuts.append(f"{s.get('stat', '?')[:4].capitalize()}({t})")
-            
-            if statuts:
-                status_y = stats_y + 42
-                status_txt = " • ".join(statuts[:3])
-                status_surf = self.font_small.render(status_txt, True, (255, 170, 170))
-                # Fond pour lisibilité
-                status_bg = pygame.Surface((status_surf.get_width() + 16, 26), pygame.SRCALPHA)
-                status_bg.fill((0, 0, 0, 120))
-                screen.blit(status_bg, (x - 3, status_y - 3))
-                screen.blit(status_surf, (x, status_y))
+                if t <= 0:
+                    continue
+                label, color, icon_key = self._status_token(s.get('stat', '?'))
+                x_cursor = self._render_status_chip(screen, x_cursor, status_y, label, color, t, icon_key)
+                chips_drawn += 1
+                if chips_drawn >= 3:
+                    break
     
     def afficher_messages(self, screen):
         """Affiche les messages de combat"""
@@ -575,7 +730,8 @@ class Combat:
         screen.blit(title, (x, y))
         y += 35
         
-        # Messages
+        # Messages avec retour à la ligne automatique
+        max_width = msg_rect.width - 30
         for msg in self.messages[-3:]:
             icon = ">"
             if "degats" in msg.lower() or "dommages" in msg.lower():
@@ -586,10 +742,23 @@ class Combat:
                 icon = "x"
             elif "critique" in msg.lower():
                 icon = "!"
-            
-            text = self.font_small.render(f"{icon} {msg}", True, (255, 255, 255))
-            screen.blit(text, (x, y))
-            y += 32
+
+            words = (f"{icon} {msg}").split()
+            line = ""
+            for word in words:
+                test = (line + " " + word).strip()
+                if self.font_small.size(test)[0] <= max_width:
+                    line = test
+                else:
+                    if line:
+                        text = self.font_small.render(line, True, (255, 255, 255))
+                        screen.blit(text, (x, y))
+                        y += 28
+                    line = word
+            if line:
+                text = self.font_small.render(line, True, (255, 255, 255))
+                screen.blit(text, (x, y))
+                y += 28
         
         # Hint
         hint = self.font_tiny.render("[ Cliquez pour continuer ]", True, (180, 180, 200))

@@ -37,6 +37,7 @@ def pluie_de_fleches(attaquant, cible, equipe):
         reels = cible.prendre_degats(degats)
         total += reels
         messages.append(f"Flèche {i+1} : {reels} dégâts")
+        attaquant.stack -= 1
 
         if not cible.est_vivant():
             break

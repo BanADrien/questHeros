@@ -1,6 +1,18 @@
 [
   {
     "nom_joueur": "Joueur",
+    "date": "14/12/2025 16:58:11",
+    "equipe": [
+      "Berserker",
+      "Paladin",
+      "Mage"
+    ],
+    "victoires": 9,
+    "total_monstres": 10,
+    "tours": 18
+  },
+  {
+    "nom_joueur": "Joueur",
     "date": "14/12/2025 15:42:40",
     "equipe": [
       "Mage",
@@ -102,18 +114,6 @@
       "Archer",
       "Berserker",
       "Paladin"
-    ],
-    "victoires": 2,
-    "total_monstres": 2,
-    "tours": 0
-  },
-  {
-    "nom_joueur": "Joueur",
-    "date": "12/12/2025 15:08:48",
-    "equipe": [
-      "Mage",
-      "Hémomancien",
-      "Assasin"
     ],
     "victoires": 2,
     "total_monstres": 2,

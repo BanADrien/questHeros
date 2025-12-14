@@ -31,18 +31,34 @@ class Partie:
         self.victoires = 0
         self.items_par_rarete = {}
         self.raretes = {}
+        # Config: item de départ (None pour désactiver). Peut être défini par code.
+        # Par défaut, on donne la Cape du héro pour vos tests.
+        self.start_item_name = os.getenv("DEBUG_ITEM_START", "Bouclier du gardien")
+        self.start_item_trigger_event = True
         
         # État du combat
         self.hero_actuel_index = 0  # Pour gérer quel héro attaque
         self.attaque_choisie = None  # Stocker l'attaque sélectionnée
         
-        # config fenetre
+        # Config fenêtre et rendu scalable
         pygame.init()
-        self.WIDTH = 1600
-        self.HEIGHT = 900
+        # Résolution logique de référence
+        self.BASE_WIDTH = 1600
+        self.BASE_HEIGHT = 900
+        # Dimensions logiques utilisées par le reste du jeu
+        self.WIDTH = self.BASE_WIDTH
+        self.HEIGHT = self.BASE_HEIGHT
 
-        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
+        # Fenêtre redimensionnable aux dimensions de l'écran actuel
+        display_info = pygame.display.Info()
+        initial_w = display_info.current_w
+        initial_h = display_info.current_h
+        self.screen = pygame.display.set_mode((initial_w, initial_h), pygame.RESIZABLE)
         pygame.display.set_caption("Quest Heroes")
+
+        # Surface de rendu à la résolution logique, qui sera ensuite upscalée/downscalée
+        self.base_surface = pygame.Surface((self.BASE_WIDTH, self.BASE_HEIGHT)).convert()
+        self._mouse_get_pos_original = pygame.mouse.get_pos
 
         self.clock = pygame.time.Clock()
         self.running = True
@@ -50,10 +66,36 @@ class Partie:
         # Ecran actuel (menu par défaut)
         from screens.menu import Menu
         self.current_screen = Menu(self)
+
+    def set_start_item(self, item_name, trigger_event=True):
+        """Définit l'item donné automatiquement au début du combat."""
+        self.start_item_name = item_name
+        self.start_item_trigger_event = trigger_event
         
     def run(self):
         while self.running:
             event_list = pygame.event.get()
+            # Mettre à jour les facteurs d'échelle selon la taille réelle de la fenêtre
+            screen_w, screen_h = self.screen.get_size()
+            scale_x = self.BASE_WIDTH / max(1, screen_w)
+            scale_y = self.BASE_HEIGHT / max(1, screen_h)
+
+            # Recaler les événements souris sur la résolution logique
+            for ev in event_list:
+                if hasattr(ev, "pos"):
+                    lx = int(ev.pos[0] * scale_x)
+                    ly = int(ev.pos[1] * scale_y)
+                    ev.pos = (lx, ly)
+                    ev.dict["pos"] = (lx, ly)
+                if hasattr(ev, "x") and hasattr(ev, "y") and ev.type == pygame.MOUSEWHEEL:
+                    # Pygame 2 fournit x/y pour wheel; pos déjà recadrée au-dessus si dispo
+                    pass
+
+            # Monkey-patch pour les appels directs à pygame.mouse.get_pos() dans les écrans
+            def _logical_mouse_pos():
+                rx, ry = self._mouse_get_pos_original()
+                return (int(rx * scale_x), int(ry * scale_y))
+            pygame.mouse.get_pos = _logical_mouse_pos
             for event in event_list:
                 if event.type == pygame.QUIT:
                     self.running = False
@@ -64,9 +106,12 @@ class Partie:
             # EVENTS - Correction : passer event_list au lieu du module events
             self.current_screen.handle_events(event_list)
             
-            # DRAW
-            self.screen.fill((30, 30, 30))
-            self.current_screen.draw(self.screen)
+            # DRAW sur la surface logique puis upscale vers l'écran
+            self.base_surface.fill((30, 30, 30))
+            self.current_screen.draw(self.base_surface)
+
+            scaled = pygame.transform.smoothscale(self.base_surface, (screen_w, screen_h))
+            self.screen.blit(scaled, (0, 0))
 
             pygame.display.flip()
             self.clock.tick(60)
@@ -192,6 +237,12 @@ class Partie:
 
         # Appliquer les effets de statut du héros
         hero.appliquer_status()
+
+        # Si le héros est tombé à 0 PV à cause d'un statut, il ne peut pas agir
+        if not hero.est_vivant():
+            resultat["hero_ko"] = True
+            resultat["messages"].append(f"{hero.nom} succombe à ses effets !")
+            return resultat
         
         if not hero.peut_attaquer:
             resultat["messages"].append(f"{hero.nom} ne peut pas attaquer ce tour.")
@@ -317,6 +368,11 @@ class Partie:
 
         # Appliquer les effets de statut du monstre
         monstre.appliquer_status()
+
+        # Si les statuts tuent le monstre, il ne joue pas son tour
+        if not monstre.est_vivant():
+            messages.append(f"{monstre.nom} succombe à ses effets !")
+            return {"messages": messages, "degats_total": degats_total}
         
         if not monstre.peut_attaquer:
             messages.append(f"{monstre.nom} ne peut pas attaquer ce tour.")
@@ -401,8 +457,25 @@ class Partie:
         self.tours_cumule = 0
         self.hero_actuel_index = 0
         
-        # Enregistrer les effets d'items au démarrage du combat
-        verifier_effet_items(self.equipe)
+        # Donner un item de départ si demandé (nom fixé), sinon générer un item aléatoire
+        try:
+            if self.equipe:
+                hero = self.equipe[0]
+                if self.start_item_name:
+                    # Utiliser le nom fourni
+                    item = test_item_giver(self.equipe, self.start_item_name, trigger_event=self.start_item_trigger_event)
+                    if item:
+                        print(f"Item de départ (fixe): {item.nom} équipé sur {hero.nom}")
+                else:
+                    from items import obtenir_item, equiper_item_a_hero
+                    item = obtenir_item(self.equipe, {'commun': 40, 'peu_commun': 30, 'rare': 20, 'legendaire': 10}, self.items_par_rarete)
+                    if item:
+                        equiper_item_a_hero(hero, item)
+                        verifier_effet_items(self.equipe)
+                        events.trigger("obtention_item", hero, item, self.equipe)
+                        print(f"Item de départ (aléatoire): {item.nom} équipé sur {hero.nom}")
+        except Exception as e:
+            print(f"[Start Item] Erreur lors de l'attribution: {e}")
     
     def sauvegarder_score(self, victoires):
         """Sauvegarde le score dans la base de données ET en JSON local"""

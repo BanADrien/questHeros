@@ -52,9 +52,10 @@ def verifier_effet_items(equipe_joueurs):
                         }
                     
                     elif nom_event == "obtention_item":
-                        # args = (joueur_equipe, item)
+                        # args = (joueur_equipe, item, equipe_complete?)
                         joueur_qui_equipe = args[0] if len(args) > 0 else None
                         item_equipe = args[1] if len(args) > 1 else None
+                        equipe_complete = args[2] if len(args) > 2 else [joueur_qui_equipe]
                         
                         event = {
                             "attaquant": joueur_qui_equipe,
@@ -62,7 +63,7 @@ def verifier_effet_items(equipe_joueurs):
                             "degats_total": 0,
                             "montant": item_effet.get("montant", None),
                             "tours": item_effet.get("tours", 1),
-                            "equipe": [joueur_qui_equipe],  # On passe juste le joueur pour simplifier
+                            "equipe": equipe_complete,
                             "attaque_type": None,
                             "item": item_equipe
                         }

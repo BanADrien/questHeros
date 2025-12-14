@@ -1,15 +1,17 @@
 import pygame
 from items import obtenir_item, equiper_item_a_hero
+import events
 from pixel_style import pixel_style
 
 class SelectionItem:
-    def __init__(self, game, item_override=None, retour_combat=False):
+    def __init__(self, game, item_override=None, retour_combat=False, combat_retour=None):
         self.game = game
         self.style = pixel_style
         self.font_title = self.style.font_title
         self.font_text = self.style.font_text
         self.font_small = self.style.font_small
         self.retour_combat = retour_combat
+        self.combat_retour = combat_retour
         
         # Charger l'image de fond
         self.background = None
@@ -65,16 +67,30 @@ class SelectionItem:
             # Ré-enregistrer les effets d'items après équiper le nouvel item
             from event_effect import verifier_effet_items
             verifier_effet_items(self.game.equipe)
+
+            # Déclencher l'événement d'obtention une fois les listeners en place
+            events.trigger("obtention_item", hero, self.item, self.game.equipe)
+
+            # Fallback de sécurité : si la transformation Héro n'a pas eu lieu, forcer
+            if getattr(self.item, "nom", "") == "Cape du héro" and hero.nom != "Héro":
+                from effects import transformation
+                transformation(hero, "Héro", self.game.equipe)
         
         self.continuer_combat()
     
     def continuer_combat(self):
         """Continue vers le prochain monstre ou retourne au combat en cours"""
         if self.retour_combat:
-            # Retourner simplement au combat en cours
-            from screens.combat import Combat
-            self.game.change_screen(Combat)
-            return
+            # Retourner simplement au combat en cours (même instance si fournie)
+            if self.combat_retour:
+                self.game.current_screen = self.combat_retour
+                if hasattr(self.combat_retour, "reprendre_apres_item"):
+                    self.combat_retour.reprendre_apres_item()
+                return
+            else:
+                from screens.combat import Combat
+                self.game.change_screen(Combat)
+                return
         
         monstre = self.game.monstre_suivant()
         
