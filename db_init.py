@@ -214,7 +214,7 @@ def init_db():
             }
         },
         {
-            "nom": "Villageois",
+            "nom": "Villagois",
             "description": "Un simple villageois voulant protéger son village mais on lui remarque un certain potentiel.",
             "type_perso": "support/??",
             "atk": 10,
@@ -298,7 +298,7 @@ def init_db():
                 },
                 "ultime": {
                     "nom": "Second éveil",
-                    "cooldown": 12,
+                    "cooldown": 14,
                     "description": "???",
                     "fonction": "transformation_legende"
                 }
