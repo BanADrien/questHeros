@@ -1,75 +1,51 @@
 [
   {
     "nom_joueur": "Joueur",
-    "date": "14/12/2025 16:58:11",
+    "date": "17/12/2025 23:04:07",
     "equipe": [
-      "Berserker",
       "Paladin",
-      "Mage"
+      "Hémomancien",
+      "Assasin"
     ],
-    "victoires": 9,
+    "victoires": 8,
+    "total_monstres": 10,
+    "tours": 24
+  },
+  {
+    "nom_joueur": "Sfadow",
+    "date": "14/12/2025 20:23:29",
+    "equipe": [
+      "Chaman",
+      "Héro",
+      "Berserker"
+    ],
+    "victoires": 10,
     "total_monstres": 10,
     "tours": 18
   },
   {
-    "nom_joueur": "Joueur",
-    "date": "14/12/2025 15:42:40",
+    "nom_joueur": "Sfadow",
+    "date": "14/12/2025 20:01:14",
     "equipe": [
-      "Mage",
+      "Héro",
       "Hémomancien",
-      "Assasin"
+      "Berserker"
     ],
-    "victoires": 0,
-    "total_monstres": 1,
-    "tours": 2
+    "victoires": 8,
+    "total_monstres": 10,
+    "tours": 14
   },
   {
-    "nom_joueur": "Joueur",
-    "date": "14/12/2025 15:36:10",
+    "nom_joueur": "Alice",
+    "date": "14/12/2025 18:06:20",
     "equipe": [
-      "Mage",
-      "Hémomancien",
-      "Assasin"
+      "Héro",
+      "Assasin",
+      "Paladin"
     ],
-    "victoires": 1,
-    "total_monstres": 1,
-    "tours": 1
-  },
-  {
-    "nom_joueur": "Joueur",
-    "date": "14/12/2025 15:33:30",
-    "equipe": [
-      "Berserker",
-      "Paladin",
-      "Mage"
-    ],
-    "victoires": 1,
-    "total_monstres": 1,
-    "tours": 1
-  },
-  {
-    "nom_joueur": "Joueur",
-    "date": "14/12/2025 15:32:18",
-    "equipe": [
-      "Mage",
-      "Hémomancien",
-      "Assasin"
-    ],
-    "victoires": 1,
-    "total_monstres": 1,
-    "tours": 1
-  },
-  {
-    "nom_joueur": "AD",
-    "date": "14/12/2025 15:29:31",
-    "equipe": [
-      "Mage",
-      "Paladin",
-      "Héro"
-    ],
-    "victoires": 1,
-    "total_monstres": 3,
-    "tours": 12
+    "victoires": 10,
+    "total_monstres": 10,
+    "tours": 19
   },
   {
     "nom_joueur": "Sylvie",
@@ -94,29 +70,5 @@
     "victoires": 9,
     "total_monstres": 10,
     "tours": 37
-  },
-  {
-    "nom_joueur": "AD",
-    "date": "12/12/2025 15:46:32",
-    "equipe": [
-      "Berserker",
-      "Paladin",
-      "Mage"
-    ],
-    "victoires": 2,
-    "total_monstres": 2,
-    "tours": 1
-  },
-  {
-    "nom_joueur": "AD",
-    "date": "12/12/2025 15:11:18",
-    "equipe": [
-      "Archer",
-      "Berserker",
-      "Paladin"
-    ],
-    "victoires": 2,
-    "total_monstres": 2,
-    "tours": 0
   }
 ]

@@ -8,6 +8,10 @@ from items import generer_loot, choisir_rarete, obtenir_item
 
 
 def effet_soin(cible, montant):
+    # Le soin n'a aucun effet sur une cible morte
+    if not cible.est_vivant():
+        return 0, f"{cible.nom} est mort, le soin n'a pas d'effet."
+
     soins_reels = min(montant, cible.pv_max - cible.pv)
     cible.pv = min(cible.pv_max, cible.pv + soins_reels)
     # Retourner le montant et un message
@@ -15,7 +19,11 @@ def effet_soin(cible, montant):
 
 
 def effet_regen(cible, montant, tours=3):
-    soin = 0-montant
+    # La régénération n'a aucun effet sur une cible morte
+    if not cible.est_vivant():
+        return 0, f"{cible.nom} est mort, la régénération n'a pas d'effet."
+
+    soin = 0 - montant
     cible.status.append({
         "stat": "regen",
         "montant": soin,
@@ -24,6 +32,10 @@ def effet_regen(cible, montant, tours=3):
     return 0, f"{cible.nom} bénéficiera de {-soin} pv de régénération pendant {tours} tours."
 
 def effet_vol_de_vie(degat, attaquant):
+    # Le vol de vie ne s'applique pas si l'attaquant est mort
+    if not attaquant.est_vivant():
+        return 0, f"{attaquant.nom} est mort, le vol de vie n'a pas d'effet."
+
     # montant est le pourcentage de regen en fonction des degats infligés
     soin = int(degat * 0.30)
     attaquant.pv = min(attaquant.pv_max, attaquant.pv + soin)
@@ -128,6 +140,22 @@ def stun(cible, tours):
 # EFFETS Speciaux
 def creer_item(attaquant, equipe, rarete_list, items_par_rarete):
     """Génère un item et remonte les infos pour ouvrir l'écran de choix"""
+    # Fallback: si la liste par rareté est vide ou absente, recharger depuis la DB
+    if not items_par_rarete or sum(len(v) for v in items_par_rarete.values()) == 0:
+        try:
+            db = get_db()
+            items = list(db.items.find({}, {"_id": 0}))
+            rebuilt = {}
+            for it in items:
+                r = it.get("rarete", "commun")
+                rebuilt.setdefault(r, []).append(it)
+            items_par_rarete = rebuilt
+            # Si aucune rareté n'a été fournie, utiliser des taux par défaut raisonnables
+            if not rarete_list:
+                rarete_list = {'commun': 60, 'peu_commun': 25, 'rare': 10, 'legendaire': 5}
+        except Exception:
+            pass
+
     item = obtenir_item(equipe, rarete_list, items_par_rarete)
     if item:
         return {
@@ -136,7 +164,12 @@ def creer_item(attaquant, equipe, rarete_list, items_par_rarete):
             "ouvrir_selection_item": True,
             "item_cree": item,
         }
-    return {"degats": 0, "messages": ["Aucun item n'a été créé."]}
+    # Dernier recours: proposer l'écran même sans item afin de ne pas 'ne rien faire'
+    return {
+        "degats": 0,
+        "messages": ["Aucun item n'a été créé."],
+        "ouvrir_selection_item": False
+    }
     
 def transformation(attaquant, nouvelle_forme, equipe):
     db = get_db()
@@ -157,7 +190,18 @@ def transformation(attaquant, nouvelle_forme, equipe):
     forme_obj.pv = min(sauver_vie, forme_obj.pv_max)
     forme_obj.items = sauver_items
     
-    index = equipe.index(attaquant)
+    # Sécuriser la recherche du porteur dans l'équipe (référence ou nom)
+    index = None
+    for i, membre in enumerate(equipe):
+        if membre is attaquant or getattr(membre, "nom", None) == getattr(attaquant, "nom", None):
+            index = i
+            break
+    if index is None:
+        # Si le porteur n'est pas trouvé (référence différente), on ajoute la nouvelle forme sans crash
+        equipe.append(forme_obj)
+        ancien_nom = attaquant.nom
+        return 0, f"{ancien_nom} se transforme en {forme_obj.nom} !"
+
     ancien_nom = attaquant.nom
     equipe[index] = forme_obj
     

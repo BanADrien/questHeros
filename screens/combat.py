@@ -1,6 +1,8 @@
 import pygame
 from attaques import obtenir_attaques_disponibles, gerer_cooldown_attaque
 from pixel_style import pixel_style
+import os
+import unicodedata
 
 class Combat:
     def __init__(self, game):
@@ -46,6 +48,10 @@ class Combat:
 
         # Icônes de statuts (assets/effets/*.png)
         self.status_icons = self._load_status_icons()
+        
+        # Cache des icônes de héros
+        self._hero_icon_cache = {}
+        self._hero_splash_cache = {}
         
         # Boutons d'attaque
         self.boutons_attaques = []
@@ -291,6 +297,83 @@ class Combat:
         value_surf = self.font_small.render(str(value), True, color)
         screen.blit(value_surf, (x + width - value_surf.get_width() - 8, y + 4))
 
+    def _slug(self, s: str) -> str:
+        """Normalise un nom en slug pour la recherche de fichier"""
+        s = s.strip().lower()
+        s = ''.join(
+            c for c in unicodedata.normalize('NFD', s)
+            if unicodedata.category(c) != 'Mn'
+        )
+        allowed = "abcdefghijklmnopqrstuvwxyz0123456789-_ "
+        s = ''.join(ch if ch in allowed else ' ' for ch in s)
+        s = '-'.join(filter(None, s.replace('_', ' ').split()))
+        return s
+
+    def _nom_to_asset_key(self, nom: str) -> str:
+        """Mappe un nom de héros au nom de fichier d'icône"""
+        mapping = {
+            "archer": "archère",
+            "hemomancien": "hémomencien",
+            "assasin": "assassin",
+            "villageois": "villagoies",
+            "hero": "héro",
+            "legende": "légende",
+        }
+        slug = self._slug(nom)
+        if slug in mapping:
+            return mapping[slug]
+        return nom.strip().lower()
+
+    def _load_hero_icon(self, nom: str, size: int = 48):
+        """Charge l'icône d'un héros depuis assets/heros_icone"""
+        key = (self._nom_to_asset_key(nom), size)
+        if key in self._hero_icon_cache:
+            return self._hero_icon_cache[key]
+        
+        asset_key = self._nom_to_asset_key(nom)
+        candidates = [
+            os.path.join("assets", "heros_icone", f"{asset_key}.png"),
+            os.path.join("assets", "heros_icone", f"{self._slug(asset_key)}.png"),
+        ]
+        
+        surf = None
+        for p in candidates:
+            if os.path.exists(p):
+                try:
+                    img = pygame.image.load(p).convert_alpha()
+                    surf = pygame.transform.smoothscale(img, (size, size))
+                    break
+                except Exception:
+                    pass
+        
+        self._hero_icon_cache[key] = surf
+        return surf
+
+    def _load_hero_splash(self, nom: str, size=(380, 380)):
+        """Charge l'illustration plein pied du héros depuis assets/heros_splash"""
+        key = (self._nom_to_asset_key(nom), size)
+        if key in self._hero_splash_cache:
+            return self._hero_splash_cache[key]
+
+        asset_key = self._nom_to_asset_key(nom)
+        candidates = [
+            os.path.join("assets", "heros_splash", f"{asset_key}.png"),
+            os.path.join("assets", "heros_splash", f"{self._slug(asset_key)}.png"),
+        ]
+
+        surf = None
+        for p in candidates:
+            if os.path.exists(p):
+                try:
+                    img = pygame.image.load(p).convert_alpha()
+                    surf = pygame.transform.smoothscale(img, size)
+                    break
+                except Exception:
+                    pass
+
+        self._hero_splash_cache[key] = surf
+        return surf
+
     def _load_status_icons(self):
         """Charge les icônes de statuts si disponibles, sinon dictionnaire vide."""
         import os
@@ -392,6 +475,19 @@ class Combat:
         overlay.set_alpha(160)
         overlay.fill((0, 0, 0))
         screen.blit(overlay, (0, 0))
+
+        # Splash art du héros actif pour mettre en avant son tour
+        splash_hero = None
+        if self.hero_actuel_index < len(self.game.equipe):
+            hero = self.game.equipe[self.hero_actuel_index]
+            if hero.est_vivant():
+                splash_hero = self._load_hero_splash(hero.nom, (380, 380))
+                if splash_hero:
+                    splash = splash_hero.copy()
+                    splash.set_alpha(175)
+                    splash_rect = splash.get_rect()
+                    splash_rect.bottomleft = (20, self.game.HEIGHT - 70)
+                    screen.blit(splash, splash_rect)
         
         # Sprite du monstre avec effet de dommages
         if self.monstre_sprite:
@@ -546,7 +642,7 @@ class Combat:
     
     def afficher_equipe(self, screen):
         """Affiche l'équipe à gauche - version épurée sans case"""
-        x = 50
+        x = 80
         y = 70
         
         # Titre sans case
@@ -571,6 +667,15 @@ class Combat:
                 screen.blit(indicator, (hero_x - 8, hero_y + 5))
             else:
                 name_color = (220, 220, 220)
+            
+            # Icône du héros à gauche
+            icon_size = 48
+            icon = self._load_hero_icon(hero.nom, icon_size)
+            if icon:
+                icon_rect = icon.get_rect()
+                icon_rect.x = hero_x - icon_size - 8
+                icon_rect.y = hero_y
+                screen.blit(icon, icon_rect)
             
             # Nom du héros
             nom = self.font_text.render(hero.nom, True, name_color)
@@ -655,11 +760,20 @@ class Combat:
         if not monstre:
             return
         
-        # Position plus à droite
-        x = 680
-        y = 65
+        # Position du sprite du monstre (référence pour la barre)
+        sprite_x = self.game.WIDTH - 470
+        sprite_y = 140
+        sprite_w = 450
+        sprite_h = 450
+        
+        # Position de la barre de vie (au-dessus du sprite)
+        bar_width = 420
+        bar_x = sprite_x + (sprite_w - bar_width) // 2  # Centrer la barre sur le sprite
+        bar_y = sprite_y - 30  # juste au-dessus du haut du sprite
 
-        # Nom avec effet d'ombre prononcé - taille réduite
+        # Nom avec effet d'ombre prononcé - au-dessus de la barre
+        x = bar_x
+        y = bar_y - 45
         nom = self.font_text.render(monstre.nom.upper(), True, (255, 120, 120))
         shadow = self.font_text.render(monstre.nom.upper(), True, (40, 10, 10))
         # Double ombre pour plus de profondeur
@@ -667,30 +781,26 @@ class Combat:
         shadow2 = self.font_text.render(monstre.nom.upper(), True, (60, 15, 15))
         screen.blit(shadow2, (x + 1, y + 1))
         screen.blit(nom, (x, y))
-
-        # Barre de vie élégante sans case
-        bar_y = y + 40
-        bar_width = 420
         
         # Fond sombre derrière la barre pour contraste
-        bg_bar = pygame.Surface((bar_width + 100, 50), pygame.SRCALPHA)
-        bg_bar.fill((0, 0, 0, 100))
-        screen.blit(bg_bar, (x - 5, bar_y - 5))
+        bg_bar = pygame.Surface((bar_width + 20, 50), pygame.SRCALPHA)
+        bg_bar.fill((0, 0, 0, 150))
+        screen.blit(bg_bar, (bar_x - 10, bar_y - 5))
         
         # Barre de vie principale
-        self.draw_hp_bar(screen, x, bar_y, bar_width, 36, monstre.pv, monstre.pv_max, (220, 60, 60))
+        self.draw_hp_bar(screen, bar_x, bar_y, bar_width, 36, monstre.pv, monstre.pv_max, (220, 60, 60))
         
         # HP texte bien visible avec ombre
         hp_text = self.font_text.render(f"{monstre.pv}/{monstre.pv_max}", True, (255, 255, 255))
         hp_shadow = self.font_text.render(f"{monstre.pv}/{monstre.pv_max}", True, (0, 0, 0))
-        hp_x = x + bar_width + 15
+        hp_x = bar_x + bar_width + 15
         screen.blit(hp_shadow, (hp_x + 2, bar_y + 7))
         screen.blit(hp_text, (hp_x, bar_y + 5))
 
         # Stats épurées sous la barre
         stats_y = bar_y + 50
-        self.draw_stat_box(screen, x, stats_y, "ATK", monstre.atk, (255, 150, 150))
-        self.draw_stat_box(screen, x + 105, stats_y, "DEF", monstre.defense, (150, 200, 255))
+        self.draw_stat_box(screen, bar_x, stats_y, "ATK", monstre.atk, (255, 150, 150))
+        self.draw_stat_box(screen, bar_x + 105, stats_y, "DEF", monstre.defense, (150, 200, 255))
 
         # Statuts avec fond semi-transparent
         monstre_statuses = []

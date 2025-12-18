@@ -103,8 +103,12 @@ class Combattant:
                 print(f"> {self.nom} subit {total} dégâts de {stat} ! (PV : {self.pv}/{self.pv_max})")
 
             elif stat == "regen":
-                self.pv = min(self.pv_max, self.pv - total)
-                print(f"> {self.nom} régénère {-total} PV ! (PV : {self.pv}/{self.pv_max})")
+                # Ne pas régénérer si le combattant est mort
+                if self.est_vivant():
+                    self.pv = min(self.pv_max, self.pv - total)
+                    print(f"> {self.nom} régénère {-total} PV ! (PV : {self.pv}/{self.pv_max})")
+                else:
+                    print(f"> {self.nom} est mort, la régénération n'a pas d'effet.")
             elif stat == "stun":
                 self.peut_attaquer = False
                 print(f"> {self.nom} est étourdi et ne peut pas attaquer ce tour !")

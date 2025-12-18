@@ -9,7 +9,7 @@ def coup_de_fourche(attaquant, cible, equipe):
 def encouragement(attaquant, cible, equipe):
     messages = []
     for membre in equipe:
-        # ne pas compter le villageois
+        # ne pas compter le villageois  s
         if membre != attaquant:
             for attaque in membre.cooldowns:
                 if membre.cooldowns[attaque] > 0:

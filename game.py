@@ -31,6 +31,8 @@ class Partie:
         self.victoires = 0
         self.items_par_rarete = {}
         self.raretes = {}
+        # Config: item de départ à donner au premier héros au combat (None = désactiver)
+        self.start_item_name = None
         
         # État du combat
         self.hero_actuel_index = 0  # Pour gérer quel héro attaque
@@ -448,7 +450,18 @@ class Partie:
         self.tours_cumule = 0
         self.hero_actuel_index = 0
         
+        # Donner l'item de départ si configuré
+        if self.start_item_name and self.equipe:
+            try:
+                from items import test_item_giver
+                item = test_item_giver(self.equipe, self.start_item_name, trigger_event=True)
+                if item:
+                    print(f"[Start] Item: {item.nom} équipé sur {self.equipe[0].nom}")
+            except Exception as e:
+                print(f"[Start Item] Erreur: {e}")
+        
         # Enregistrer les effets d'items au démarrage du combat
+        # (charger_items() et charger_monstres() doivent être appelés avant)
         verifier_effet_items(self.equipe)
     
     def sauvegarder_score(self, victoires):

@@ -4,7 +4,7 @@ import random
 def totem_regen(attaquant, cible, equipe):
     messages = []
     for membre in equipe:
-        _, msg_part = effet_regen(membre, 5, 3)
+        _, msg_part = effet_regen(membre, 10, 3)
         messages.append(msg_part)
     
     return {"degats": 0, "messages": messages}
